@@ -1,13 +1,6 @@
-/*
-Дан файл, содержащий сведения об ассортименте игрушек в магазине. Структура записи: название игрушки, цена, количество,
-возрастные границы, например от 2 до 5. Вывести названия игрушек, которые подходят детям определенного возраста и стоят
-не больше определенной суммы. Получить сведения о самом дорогом конструкторе.
-*/
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
 
 #define TABLE_TOP "╔══════════════════════════════════════════╦════════╦════════╦════════════╦════════════╗\n║ Название игрушки                         ║ Цена   ║ Кол-во ║ Возраст от ║ Возраст до ║"
 #define TABLE_CONNECT "╠══════════════════════════════════════════╬════════╬════════╬════════════╬════════════╣"
@@ -15,18 +8,19 @@
 #define TABLE_BOTTOM "╚══════════════════════════════════════════╩════════╩════════╩════════════╩════════════╝"
 #define CLEAR_CONSOLE 1
 
-
 #if defined(_WIN64) || defined(_WIN32)
-    #include <windows.h>
-    #define CLEAR if(CLEAR_CONSOLE) system("cls")
+#include <windows.h>
+#define CLEAR          \
+    if (CLEAR_CONSOLE) \
+    system("cls")
 #elif defined(__linux)
-    #define CLEAR if(CLEAR_CONSOLE) system("clear")
+#define CLEAR          \
+    if (CLEAR_CONSOLE) \
+    system("clear")
 #endif
-
 
 #define N 81
 #define TOY_PAGE 10
-
 
 int Menu();
 int Open(FILE **file, char path[], char rights[]);
@@ -34,6 +28,7 @@ void Close(FILE **file);
 int StrPadding(char str[], int space);
 void FileView();
 void Input(char flag[], void *a, char message[]);
+void GetString(char str[N], char message[]);
 void AddData();
 void CreateFilef();
 void ToySearch();
@@ -41,8 +36,7 @@ void MaxConstructor();
 void ToyDelete();
 void ToyEdit();
 
-
-struct toy 
+struct toy
 {
     char name[N];
     double price;
@@ -51,33 +45,23 @@ struct toy
     int age_max;
 };
 
+char filename[N];
 
-struct node 
+int main(int argc, char *argv[])
 {
-    struct toy item;
-    struct node *next;
-    struct node *prev;
-};
-
-
-char filename[81];
-
-
-int main(int argc, char *argv[]) {
-    #if defined(_WIN64) || defined(_WIN32)
-        SetConsoleCP(CP_UTF8);
-        SetConsoleOutputCP(CP_UTF8);
-    #endif
+#if defined(_WIN64) || defined(_WIN32)
+    SetConsoleCP(CP_UTF8);
+    SetConsoleOutputCP(CP_UTF8);
+#endif
 
     CLEAR;
-    if (argc == 2) 
+    if (argc == 2)
     {
         strcpy(filename, argv[1]);
     }
-    else if (argc == 1) 
+    else if (argc == 1)
     {
-        printf("Введите имя файла: ");
-        gets(filename);
+        GetString(filename, "Введите имя файла: ");
     }
     else
     {
@@ -88,11 +72,12 @@ int main(int argc, char *argv[]) {
     return Menu();
 }
 
-
-int Menu() {
+int Menu()
+{
     int choice;
 
-    do {
+    do
+    {
         CLEAR;
         puts("1. Создание файла");
         puts("2. Добавление данных");
@@ -104,12 +89,15 @@ int Menu() {
         puts("0. Завершить программу\n");
 
         printf("Введите пункт меню: ");
-        while (!scanf("%d", &choice)) {
+        while (!scanf("%d", &choice))
+        {
             printf("Введены неверные данные!\nВведите пункт меню: ");
-            while(getchar() != '\n');
+            while (getchar() != '\n')
+                ;
         }
 
-        switch (choice) {
+        switch (choice)
+        {
         case 1:
             CreateFilef();
             break;
@@ -138,42 +126,46 @@ int Menu() {
             puts("Введен неверный пункт меню!");
         }
 
-    } while (choice < 0 || choice > 7 || choice);
+    } while (choice);
 
     return 0;
 }
 
-
-int Open(FILE **file, char path[], char rights[]) {
-    if ((*file = fopen(path, rights)) == NULL) {
+int Open(FILE **file, char path[], char rights[])
+{
+    if ((*file = fopen(path, rights)) == NULL)
+    {
         CLEAR;
         printf("Ошибка открытия файла!\n");
         getchar();
         return 0;
     }
-    else {
+    else
+    {
         return 1;
     }
 }
 
-
-void Close(FILE **file) {
-    if (*file != NULL) {
+void Close(FILE **file)
+{
+    if (*file != NULL)
+    {
         fclose(*file);
     }
 }
 
-
-int StrPadding(char str[], int n) {
+int StrPadding(char str[], int n)
+{
     /*
         Русские буквы занимают в строке 2 байта, а ASCII 1 байт
     */
     int i;
 
-    for(i=0; i<N; i++) {
-        if(str[i] == '\0')
+    for (i = 0; i < N; i++)
+    {
+        if (str[i] == '\0')
             break;
-        else if(str[i] < 0)
+        else if (str[i] < 0)
             i++;
 
         n--;
@@ -182,32 +174,35 @@ int StrPadding(char str[], int n) {
     return n;
 }
 
-
-void FileView() {
+void FileView()
+{
     CLEAR;
     FILE *f;
-    if(Open(&f, filename, "rb")) {
+    if (Open(&f, filename, "rb"))
+    {
         int count, pages_num, i, j;
         struct toy current;
         char choice;
 
         fseek(f, 0, SEEK_END);
-        count = ftell(f)/sizeof(struct toy);
-        pages_num = count/TOY_PAGE + 1;
-        while(count >= TOY_PAGE)
+        count = ftell(f) / sizeof(struct toy);
+        pages_num = count / TOY_PAGE + 1;
+        while (count >= TOY_PAGE)
             count = count - TOY_PAGE;
         fseek(f, 0, SEEK_SET);
 
-        for (i=0;i<pages_num;i++) {
+        for (i = 0; i < pages_num; i++)
+        {
             CLEAR;
             puts(TABLE_TOP);
-            
-            if(i+1==pages_num&&count==0)
+
+            if (i + 1 == pages_num && count == 0)
                 break;
-            
-            for (j=0;j<TOY_PAGE;j++) {
+
+            for (j = 0; j < TOY_PAGE; j++)
+            {
                 fread(&current, sizeof(struct toy), 1, f);
-                if(feof(f))
+                if (feof(f))
                     break;
 
                 puts(TABLE_CONNECT);
@@ -216,28 +211,35 @@ void FileView() {
             puts(TABLE_BOTTOM);
             printf("<--j   q-выход   l-->\n");
 
-            do {
+            do
+            {
                 printf("Ввод: ");
-                while(getchar() != '\n');
-                while (!scanf("%c", &choice)) {
+                while (getchar() != '\n')
+                    ;
+                while (!scanf("%c", &choice))
+                {
                     printf("Ошибка ввода!\nВвод: ");
-                    while(getchar() != '\n');
+                    while (getchar() != '\n')
+                        ;
                 }
 
-                if(choice != 'j' && choice != 'q' && choice != 'l') printf("Неизвестная команда!\n");
-            } while(choice != 'j' && choice != 'q' && choice != 'l');
+                if (choice != 'j' && choice != 'q' && choice != 'l')
+                    printf("Неизвестная команда!\n");
+            } while (choice != 'j' && choice != 'q' && choice != 'l');
 
-            if(choice == 'j') {
-                if(i == 0)
+            if (choice == 'j')
+            {
+                if (i == 0)
                     break;
-                else if(i+1 == pages_num)
-                    fseek(f, -sizeof(struct toy)*(count+TOY_PAGE), SEEK_CUR);
+                else if (i + 1 == pages_num)
+                    fseek(f, -sizeof(struct toy) * (count + TOY_PAGE), SEEK_CUR);
                 else
-                    fseek(f, -sizeof(struct toy)*TOY_PAGE*2, SEEK_CUR);
+                    fseek(f, -sizeof(struct toy) * TOY_PAGE * 2, SEEK_CUR);
 
                 i -= 2;
             }
-            else if (choice == 'q') {
+            else if (choice == 'q')
+            {
                 break;
             }
         }
@@ -246,27 +248,45 @@ void FileView() {
     }
 }
 
-
-void Input(char flag[], void *a, char message[]) {
+void Input(char flag[], void *a, char message[])
+{
     printf(message);
-    while (!scanf(flag, a)) {
+    while (!scanf(flag, a))
+    {
         puts("Неверные данные!");
         puts(message);
-        while (getchar()!='\n');
+        while (getchar() != '\n')
+            ;
     }
     getchar();
 }
 
+void GetString(char str[N], char message[])
+{
+    int i;
 
-void AddData() {
+    printf(message);
+    fgets(str, N, stdin);
+    for (i = 0; i < N; i++)
+    {
+        if (str[i] == '\n')
+        {
+            str[i] = '\0';
+            break;
+        }
+    }
+}
+
+void AddData()
+{
     CLEAR;
     FILE *f;
-    if(Open(&f, filename, "ab")) {
+    if (Open(&f, filename, "ab"))
+    {
         struct toy new;
         getchar();
 
-        printf("Введите название игрушки: ");
-        gets(new.name);
+        GetString(new.name, "Введите название игрушки: ");
 
         Input("%lf", &new.price, "Введите цену: ");
         Input("%d", &new.quantity, "Введите количество: ");
@@ -279,46 +299,53 @@ void AddData() {
     }
 }
 
-
-void CreateFilef() {
+void CreateFilef()
+{
     FILE *f;
-    if(Open(&f, filename, "w")) {
+    if (Open(&f, filename, "w"))
+    {
         printf("Файл создан!\n");
         Close(&f);
     }
 }
 
-
-void ToySearch() {
+void ToySearch()
+{
     CLEAR;
     int age;
     double price;
     struct toy current;
 
-    do {
+    do
+    {
         printf("Введите возраст и цену: ");
-        while(scanf("%d%lf", &age, &price) != 2) {
-            while(getchar() != '\n');
+        while (scanf("%d%lf", &age, &price) != 2)
+        {
+            while (getchar() != '\n')
+                ;
             printf("Ошибка ввода!\nВведите возраст и цену: ");
         }
-        if(age < 0 || price < 0)
+        if (age < 0 || price < 0)
             printf("Введено отрицательное значение!\n");
-    } while(age < 0 || price < 0);
-    while(getchar() != '\n');
+    } while (age < 0 || price < 0);
+    while (getchar() != '\n')
+        ;
 
     FILE *f;
-    if(Open(&f, filename, "rb")) {
+    if (Open(&f, filename, "rb"))
+    {
         puts(TABLE_TOP);
-        while(!feof(f)) {
+        while (!feof(f))
+        {
             fread(&current, sizeof(struct toy), 1, f);
-            if(feof(f))
+            if (feof(f))
                 break;
 
-            if(current.age_min <= age && current.age_max >= age && current.price <= price) {
+            if (current.age_min <= age && current.age_max >= age && current.price <= price)
+            {
                 puts(TABLE_CONNECT);
                 printf(TABLE_DATA, current.name, StrPadding(current.name, 41), " ", current.price, current.quantity, current.age_min, current.age_max);
             }
-
         }
         puts(TABLE_BOTTOM);
     }
@@ -327,19 +354,23 @@ void ToySearch() {
     getchar();
 }
 
-
-void MaxConstructor() {
+void MaxConstructor()
+{
     CLEAR;
-    int i;
     FILE *f;
-    if(Open(&f, filename, "rb")) {
-        double max_price=0;
+    if (Open(&f, filename, "rb"))
+    {
+        int i;
+        double max_price = 0;
         struct toy current;
 
         fread(&current, sizeof(struct toy), 1, f);
-        while(!feof(f)) {
-            for(i=0; i<N; i++) {
-                if(current.name[i] == -48 && current.name[i+1] == -102 && current.name[i+20] == -47 && current.name[i+21] == -128 && max_price < current.price) { // Проверка 2 байт 'К' и 'р'
+        while (!feof(f))
+        {
+            for (i = 0; i < N; i++)
+            {
+                if (current.name[i] == -48 && current.name[i + 1] == -102 && current.name[i + 20] == -47 && current.name[i + 21] == -128 && max_price < current.price)
+                { // Проверка 2 байт 'К' и 'р'
                     max_price = current.price;
                 }
             }
@@ -349,15 +380,19 @@ void MaxConstructor() {
         fseek(f, 0, SEEK_SET);
 
         fread(&current, sizeof(struct toy), 1, f);
-        while(!feof(f)) {
-            for(i=0; i<N; i++) {
-                if(current.name[i] == -48 && current.name[i+1] == -102 && current.name[i+20] == -47 && current.name[i+21] == -128 && max_price == current.price) { // Проверка 2 байт 'К' и 'р'
+        while (!feof(f))
+        {
+            for (i = 0; i < N; i++)
+            {
+                if (current.name[i] == -48 && current.name[i + 1] == -102 && current.name[i + 20] == -47 && current.name[i + 21] == -128 && max_price == current.price)
+                { // Проверка 2 байт 'К' и 'р'
                     puts(TABLE_TOP);
                     puts(TABLE_CONNECT);
                     printf(TABLE_DATA, current.name, StrPadding(current.name, 41), " ", current.price, current.quantity, current.age_min, current.age_max);
                     puts(TABLE_BOTTOM);
 
-                    while(getchar() != '\n');
+                    while (getchar() != '\n')
+                        ;
                     printf("Для продолжение нажмите любую клавишу...");
                     getchar();
                     fseek(f, 0, SEEK_END);
@@ -370,22 +405,26 @@ void MaxConstructor() {
     }
 }
 
-
-void ToyDelete() {
+void ToyDelete()
+{
     CLEAR;
     FILE *f, *t;
     char del[N], choice;
     struct toy current;
 
-    printf("Введите строку: ");
-    while(getchar() != '\n');
-    gets(del);
+    while (getchar() != '\n')
+        ;
+    GetString(del, "Введите строку: ");
 
-    if(Open(&f, filename, "rb")) {
-        if(Open(&t, "_temp", "wb")) {
+    if (Open(&f, filename, "rb"))
+    {
+        if (Open(&t, "_temp", "wb"))
+        {
             fread(&current, sizeof(struct toy), 1, f);
-            while(!feof(f)) {
-                if(!strcmp(current.name, del)){
+            while (!feof(f))
+            {
+                if (!strcmp(current.name, del))
+                {
                     puts(TABLE_TOP);
                     puts(TABLE_CONNECT);
                     printf(TABLE_DATA, current.name, StrPadding(current.name, 41), " ", current.price, current.quantity, current.age_min, current.age_max);
@@ -394,18 +433,21 @@ void ToyDelete() {
                     do
                     {
                         printf("\nВы хотите удалить данный товар?\ny - да n - нет\n");
-                        while(scanf("%c", &choice) != 1) {
-                            while(getchar() != '\n');
+                        while (scanf("%c", &choice) != 1)
+                        {
+                            while (getchar() != '\n')
+                                ;
                             printf("Ошибка ввода!\nВы хотите удалить данный товар?\ny - да n - нет\n");
                         }
-                        if(choice != 'y' && choice != 'n')
+                        if (choice != 'y' && choice != 'n')
                             printf("Ошибка ввода!\n");
                     } while (choice != 'y' && choice != 'n');
 
-                    if(choice == 'n')
+                    if (choice == 'n')
                         fwrite(&current, sizeof(struct toy), 1, t);
                 }
-                else {
+                else
+                {
                     fwrite(&current, sizeof(struct toy), 1, t);
                 }
 
@@ -420,22 +462,25 @@ void ToyDelete() {
     }
 }
 
-
-void ToyEdit() {
+void ToyEdit()
+{
     CLEAR;
     FILE *f;
     int int_choice;
     char edit[N], choice;
     struct toy current;
 
-    printf("Введите строку: ");
-    while(getchar() != '\n');
-    gets(edit);
+    while (getchar() != '\n')
+        ;
+    GetString(edit, "Введите строку: ");
 
-    if(Open(&f, filename, "rb+")) {
+    if (Open(&f, filename, "rb+"))
+    {
         fread(&current, sizeof(struct toy), 1, f);
-        while(!feof(f)) {
-            if(!strcmp(current.name, edit)){
+        while (!feof(f))
+        {
+            if (!strcmp(current.name, edit))
+            {
                 puts(TABLE_TOP);
                 puts(TABLE_CONNECT);
                 printf(TABLE_DATA, current.name, StrPadding(current.name, 41), " ", current.price, current.quantity, current.age_min, current.age_max);
@@ -444,16 +489,20 @@ void ToyEdit() {
                 do
                 {
                     printf("\nВы хотите изменить данный товар?\ny - да n - нет\n");
-                    while(scanf("%c", &choice) != 1) {
-                        while(getchar() != '\n');
+                    while (scanf("%c", &choice) != 1)
+                    {
+                        while (getchar() != '\n')
+                            ;
                         printf("Ошибка ввода!\nВы хотите изменить данный товар?\ny - да n - нет ");
                     }
-                    if(choice != 'y' && choice != 'n')
+                    if (choice != 'y' && choice != 'n')
                         printf("Ошибка ввода!\n");
                 } while (choice != 'y' && choice != 'n');
 
-                if(choice == 'y') {
-                    do {
+                if (choice == 'y')
+                {
+                    do
+                    {
                         puts("1. Изменить название");
                         puts("2. Изменить цену");
                         puts("3. Изменить количество");
@@ -463,29 +512,29 @@ void ToyEdit() {
                         Input("%d", &int_choice, "Введите пункт: ");
                         CLEAR;
 
-                        switch(int_choice) {
-                            case 1:
-                                printf("Введите название игрушки: ");
-                                gets(current.name);
-                                break;
-                            case 2:
-                                Input("%lf", &current.price, "Введите цену: ");
-                                break;
-                            case 3:
-                                Input("%d", &current.quantity, "Введите количество: ");
-                                break;
-                            case 4:
-                                Input("%d", &current.age_min, "Введите минимальный возраст: ");
-                                break;
-                            case 5:
-                                Input("%d", &current.age_max, "Введите максимальный возраст: ");
-                                break;
-                            case 0:
-                                break;
-                            default:
-                                puts("Введен неверный пункт меню!");
+                        switch (int_choice)
+                        {
+                        case 1:
+                            GetString(current.name, "Введите название игрушки: ");
+                            break;
+                        case 2:
+                            Input("%lf", &current.price, "Введите цену: ");
+                            break;
+                        case 3:
+                            Input("%d", &current.quantity, "Введите количество: ");
+                            break;
+                        case 4:
+                            Input("%d", &current.age_min, "Введите минимальный возраст: ");
+                            break;
+                        case 5:
+                            Input("%d", &current.age_max, "Введите максимальный возраст: ");
+                            break;
+                        case 0:
+                            break;
+                        default:
+                            puts("Введен неверный пункт меню!");
                         }
-                    } while(int_choice < 0 || int_choice > 5 || int_choice);
+                    } while (int_choice);
 
                     fseek(f, -sizeof(struct toy), SEEK_CUR);
                     fwrite(&current, sizeof(struct toy), 1, f);
