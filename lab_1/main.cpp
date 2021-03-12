@@ -1,6 +1,5 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include <iostream>
+#include <cstring>
 
 #define TABLE_TOP "╔══════════════════════════════════════════╦════════╦════════╦════════════╦════════════╗\n║ Название игрушки                         ║ Цена   ║ Кол-во ║ Возраст от ║ Возраст до ║"
 #define TABLE_CONNECT "╠══════════════════════════════════════════╬════════╬════════╬════════════╬════════════╣"
@@ -283,17 +282,17 @@ void AddData()
     FILE *f;
     if (Open(&f, filename, "ab"))
     {
-        struct toy new;
+        struct toy newt;
         getchar();
 
-        GetString(new.name, "Введите название игрушки: ");
+        GetString(newt.name, "Введите название игрушки: ");
 
-        Input("%lf", &new.price, "Введите цену: ");
-        Input("%d", &new.quantity, "Введите количество: ");
-        Input("%d", &new.age_min, "Введите минимальный возраст: ");
-        Input("%d", &new.age_max, "Введите максимальный возраст: ");
+        Input("%lf", &newt.price, "Введите цену: ");
+        Input("%d", &newt.quantity, "Введите количество: ");
+        Input("%d", &newt.age_min, "Введите минимальный возраст: ");
+        Input("%d", &newt.age_max, "Введите максимальный возраст: ");
 
-        fwrite(&new, sizeof(struct toy), 1, f);
+        fwrite(&newt, sizeof(struct toy), 1, f);
         printf("Запись завершена!\n");
         Close(&f);
     }
