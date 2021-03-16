@@ -2,32 +2,31 @@
 
 using namespace std;
 
-class Node
-{
-public:
-    int item;
-    Node *next = NULL;
-    Node *prev = NULL;
-};
-
 class List
 {
 private:
-    Node *_first = NULL;
-    Node *_last = NULL;
+    typedef struct node
+    {
+        int item;
+        node *next = nullptr;
+        node *prev = nullptr;
+    } node;
+
+    node *_first = nullptr;
+    node *_last = nullptr;
 
 public:
     void add_start(const int a)
     {
-        if (_first == NULL)
+        if (!_first)
         {
-            _first = new Node();
+            _first = new node;
             _first->item = a;
             _last = _first;
         }
         else
         {
-            Node *new_node = new Node();
+            node *new_node = new node;
             new_node->item = a;
             new_node->next = _first;
             _first->prev = new_node;
@@ -35,17 +34,40 @@ public:
         }
     }
 
-    void add_end(const int a)
+    void add_start(const int a, const int num)
     {
-        if (_last == NULL)
+        if (!_first)
         {
-            _last = new Node();
-            _last->item = a;
-           _first = _last;
+            _first = new node;
+            _first->item = a;
+            _last = _first;
         }
         else
         {
-            Node *new_node = new Node();
+            node
+                *p = _first,
+                *new_node = new node;
+
+            for (int i = 0; i < num - 1; i++)
+                p = p->next;
+            new_node->item = a;
+            new_node->next = p;
+            new_node->prev = p->prev;
+            p->prev = new_node;
+        }
+    }
+
+    void add_end(const int a)
+    {
+        if (!_last)
+        {
+            _last = new node;
+            _last->item = a;
+            _first = _last;
+        }
+        else
+        {
+            node *new_node = new node;
             new_node->item = a;
             new_node->prev = _last;
             _last->next = new_node;
@@ -55,9 +77,9 @@ public:
 
     friend ostream &operator<<(ostream &stream, const List *n)
     {
-        if (n->_first != NULL)
+        if (n->_first)
         {
-            Node *p = n->_first;
+            node *p = n->_first;
             do
             {
                 stream << p->item;
@@ -83,6 +105,9 @@ int main()
     test->add_end(4);
     test->add_end(5);
     test->add_end(6);
+    test->add_start(100, 3);
+    test->add_start(100, 2);
+    test->add_start(100, 5);
     cout << test;
 
     delete test;
