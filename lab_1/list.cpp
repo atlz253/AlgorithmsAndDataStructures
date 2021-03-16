@@ -34,13 +34,11 @@ public:
         }
     }
 
-    void add_start(const int a, const int num)
+    void add_start(const int a, const unsigned int num)
     {
-        if (!_first)
+        if (num == 1)
         {
-            _first = new node;
-            _first->item = a;
-            _last = _first;
+            add_start(a);
         }
         else
         {
@@ -49,11 +47,25 @@ public:
                 *new_node = new node;
 
             for (int i = 0; i < num - 1; i++)
-                p = p->next;
-            new_node->item = a;
-            new_node->next = p;
-            new_node->prev = p->prev;
-            p->prev = new_node;
+            {
+                if (p == nullptr)
+                    break;
+                else
+                    p = p->next;
+            }
+
+            if (p)
+            {
+                new_node->item = a;
+                new_node->next = p;
+                new_node->prev = p->prev;
+                p->prev->next = new_node;
+                p->prev = new_node;
+            }
+            else
+            {
+                add_end(a);
+            }
         }
     }
 
@@ -106,8 +118,6 @@ int main()
     test->add_end(5);
     test->add_end(6);
     test->add_start(100, 3);
-    test->add_start(100, 2);
-    test->add_start(100, 5);
     cout << test;
 
     delete test;
