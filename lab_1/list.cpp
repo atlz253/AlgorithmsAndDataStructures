@@ -15,8 +15,7 @@ private:
     node *_first = nullptr;
     node *_last = nullptr;
 
-public:
-    void add_start(const int a)
+    void _add_start(const int a)
     {
         if (!_first)
         {
@@ -34,42 +33,7 @@ public:
         }
     }
 
-    void add_start(const int a, const unsigned int num)
-    {
-        if (num == 0)
-        {
-            add_start(a);
-        }
-        else
-        {
-            node
-                *p = _first,
-                *new_node = new node;
-
-            for (int i = 0; i < num; i++)
-            {
-                if (p == nullptr)
-                    break;
-                else
-                    p = p->next;
-            }
-
-            if (p)
-            {
-                new_node->item = a;
-                new_node->next = p;
-                new_node->prev = p->prev;
-                p->prev->next = new_node;
-                p->prev = new_node;
-            }
-            else
-            {
-                add_end(a);
-            }
-        }
-    }
-
-    void add_end(const int a)
+    void _add_end(const int a)
     {
         if (!_last)
         {
@@ -84,6 +48,39 @@ public:
             new_node->prev = _last;
             _last->next = new_node;
             _last = new_node;
+        }
+    }
+
+public:
+    void add(const int a)
+    {
+        if (!_first)
+        {
+            _add_start(a);
+        }
+        else
+        {
+            node
+                *p = _first, 
+                *new_node = new node;
+            new_node->item = a;
+
+            while (p->next && p->item < a)
+                p = p->next;
+            
+            if (p->next || p->item > a)
+            {
+                new_node->next = p;
+                new_node->prev = p->prev;
+                if (p->prev)
+                    p->prev->next = new_node;
+                else
+                    _first = new_node;
+            }
+            else
+            {
+                _add_end(a);
+            }
         }
     }
 
@@ -111,13 +108,17 @@ public:
 int main()
 {
     List *test = new List();
-    test->add_start(1);
-    test->add_end(2);
-    test->add_end(3);
-    test->add_end(4);
-    test->add_end(5);
-    test->add_end(6);
-    test->add_start(100, 1);
+    test->add(1);
+    test->add(3);
+    test->add(4);
+    test->add(2);
+    test->add(10);
+    test->add(7);
+    test->add(2);
+    test->add(4);
+    test->add(4);
+
+
     cout << test;
 
     delete test;
