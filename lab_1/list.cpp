@@ -35,6 +35,24 @@ public:
         }
     }
 
+    void add_end(const int a)
+    {
+        if (_last == NULL)
+        {
+            _last = new Node();
+            _last->item = a;
+           _first = _last;
+        }
+        else
+        {
+            Node *new_node = new Node();
+            new_node->item = a;
+            new_node->prev = _last;
+            _last->next = new_node;
+            _last = new_node;
+        }
+    }
+
     friend ostream &operator<<(ostream &stream, const List *n)
     {
         if (n->_first != NULL)
@@ -60,11 +78,11 @@ int main()
 {
     List *test = new List();
     test->add_start(1);
-    test->add_start(2);
-    test->add_start(3);
-    test->add_start(4);
-    test->add_start(5);
-    test->add_start(6);
+    test->add_end(2);
+    test->add_end(3);
+    test->add_end(4);
+    test->add_end(5);
+    test->add_end(6);
     cout << test;
 
     delete test;
