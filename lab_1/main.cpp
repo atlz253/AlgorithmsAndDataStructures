@@ -21,6 +21,8 @@
 #define N 81
 #define TOY_PAGE 10
 
+using namespace std;
+
 int Menu();
 int Open(FILE **file, char path[], char rights[]);
 void Close(FILE **file);
@@ -35,13 +37,141 @@ void MaxConstructor();
 void ToyDelete();
 void ToyEdit();
 
-struct toy
+typedef struct toy
 {
     char name[N];
     double price;
     int quantity;
     int age_min;
     int age_max;
+} toy;
+
+class List
+{
+private:
+    typedef struct node
+    {
+        int item;
+        node *next = nullptr;
+        node *prev = nullptr;
+    } node;
+
+    node *_first = nullptr;
+    node *_last = nullptr;
+
+    void _add_start(const int a)
+    {
+        if (!_first)
+        {
+            _first = new node;
+            _first->item = a;
+            _last = _first;
+        }
+        else
+        {
+            node *new_node = new node;
+            new_node->item = a;
+            new_node->next = _first;
+            _first->prev = new_node;
+            _first = new_node;
+        }
+    }
+
+    void _add_end(const int a)
+    {
+        if (!_last)
+        {
+            _last = new node;
+            _last->item = a;
+            _first = _last;
+        }
+        else
+        {
+            node *new_node = new node;
+            new_node->item = a;
+            new_node->prev = _last;
+            _last->next = new_node;
+            _last = new_node;
+        }
+    }
+
+public:
+    void add(const int a)
+    {
+        if (!_first)
+        {
+            _add_start(a);
+        }
+        else
+        {
+            node
+                *p = _first,
+                *new_node = new node;
+            new_node->item = a;
+
+            while (p->next && p->item < a)
+                p = p->next;
+
+            if (p->next || p->item > a)
+            {
+                new_node->next = p;
+                new_node->prev = p->prev;
+                p->prev = new_node;
+                if (new_node->prev)
+                    new_node->prev->next = new_node;
+                else
+                    _first = new_node;
+            }
+            else
+            {
+                _add_end(a);
+            }
+        }
+    }
+
+    void view(void)
+    {
+        cout << this << endl;
+    }
+
+    void view_reverse(void)
+    {
+        if (_last)
+        {
+            node *p = _last;
+            do
+            {
+                cout << p->item;
+                if (p->prev)
+                    cout << " -> ";
+                p = p->prev;
+            } while (p);
+        }
+        else
+        {
+            cout << "список пуст!" << endl;
+        }
+    }
+
+    friend ostream &operator<<(ostream &stream, const List *n)
+    {
+        if (n->_first)
+        {
+            node *p = n->_first;
+            do
+            {
+                stream << p->item;
+                if (p->next)
+                    stream << " -> ";
+                p = p->next;
+            } while (p);
+        }
+        else
+        {
+            stream << "список пуст!" << endl;
+        }
+        return stream;
+    }
 };
 
 char filename[N];
