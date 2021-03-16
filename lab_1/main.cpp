@@ -51,7 +51,7 @@ class List
 private:
     typedef struct node
     {
-        int item;
+        struct toy item;
         node *next = nullptr;
         node *prev = nullptr;
     } node;
@@ -59,7 +59,7 @@ private:
     node *_first = nullptr;
     node *_last = nullptr;
 
-    void _add_start(const int a)
+    void _add_start(const struct toy a)
     {
         if (!_first)
         {
@@ -77,7 +77,7 @@ private:
         }
     }
 
-    void _add_end(const int a)
+    void _add_end(const struct toy a)
     {
         if (!_last)
         {
@@ -96,7 +96,7 @@ private:
     }
 
 public:
-    void add(const int a)
+    void add(const struct toy a)
     {
         if (!_first)
         {
@@ -109,10 +109,10 @@ public:
                 *new_node = new node;
             new_node->item = a;
 
-            while (p->next && p->item < a)
+            while (p->next && p->item.price < a.price)
                 p = p->next;
 
-            if (p->next || p->item > a)
+            if (p->next || p->item.price > a.price)
             {
                 new_node->next = p;
                 new_node->prev = p->prev;
@@ -141,7 +141,7 @@ public:
             node *p = _last;
             do
             {
-                cout << p->item;
+                cout << p->item.price;
                 if (p->prev)
                     cout << " -> ";
                 p = p->prev;
@@ -153,6 +153,19 @@ public:
         }
     }
 
+    int count()
+    {
+        node *p = _first;
+        int toy = 0;
+        while (p)
+        {
+            toy++;
+            cout << p->item.name << endl;
+            p = p->next;
+        }
+        return toy;
+    }
+
     friend ostream &operator<<(ostream &stream, const List *n)
     {
         if (n->_first)
@@ -160,7 +173,7 @@ public:
             node *p = n->_first;
             do
             {
-                stream << p->item;
+                stream << p->item.price;
                 if (p->next)
                     stream << " -> ";
                 p = p->next;
@@ -174,6 +187,7 @@ public:
     }
 };
 
+List *list = new List();
 char filename[N];
 
 int main(int argc, char *argv[])
@@ -198,7 +212,23 @@ int main(int argc, char *argv[])
         return -1;
     }
 
-    return Menu();
+    FILE *f;
+
+    if (Open(&f, filename, "rb"))
+    {
+        struct toy current;
+        while(!feof(f))
+        {
+            fread(&current, sizeof(struct toy), 1, f);
+            list->add(current);
+        }
+
+        Close(&f);
+    }
+
+    cout << list->count() << endl;
+    return 0;
+    // return Menu();
 }
 
 int Menu()
