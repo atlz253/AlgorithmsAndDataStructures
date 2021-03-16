@@ -36,7 +36,7 @@ public:
 
     void add_start(const int a, const unsigned int num)
     {
-        if (num == 1)
+        if (num == 0)
         {
             add_start(a);
         }
@@ -46,7 +46,7 @@ public:
                 *p = _first,
                 *new_node = new node;
 
-            for (int i = 0; i < num - 1; i++)
+            for (int i = 0; i < num; i++)
             {
                 if (p == nullptr)
                     break;
@@ -117,7 +117,7 @@ int main()
     test->add_end(4);
     test->add_end(5);
     test->add_end(6);
-    test->add_start(100, 3);
+    test->add_start(100, 1);
     cout << test;
 
     delete test;
