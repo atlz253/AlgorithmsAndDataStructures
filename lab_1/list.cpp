@@ -61,19 +61,20 @@ public:
         else
         {
             node
-                *p = _first, 
+                *p = _first,
                 *new_node = new node;
             new_node->item = a;
 
             while (p->next && p->item < a)
                 p = p->next;
-            
+
             if (p->next || p->item > a)
             {
                 new_node->next = p;
                 new_node->prev = p->prev;
-                if (p->prev)
-                    p->prev->next = new_node;
+                p->prev = new_node;
+                if (new_node->prev)
+                    new_node->prev->next = new_node;
                 else
                     _first = new_node;
             }
@@ -81,6 +82,30 @@ public:
             {
                 _add_end(a);
             }
+        }
+    }
+
+    void view(void)
+    {
+        cout << this << endl;
+    }
+
+    void view_reverse(void)
+    {
+        if (_last)
+        {
+            node *p = _last;
+            do
+            {
+                cout << p->item;
+                if (p->prev)
+                    cout << " -> ";
+                p = p->prev;
+            } while (p);
+        }
+        else
+        {
+            cout << "список пуст!" << endl;
         }
     }
 
@@ -92,10 +117,10 @@ public:
             do
             {
                 stream << p->item;
-                if (p->next != NULL)
+                if (p->next)
                     stream << " -> ";
                 p = p->next;
-            } while (p != NULL);
+            } while (p);
         }
         else
         {
@@ -118,8 +143,9 @@ int main()
     test->add(4);
     test->add(4);
 
-
-    cout << test;
+    test->view();
+    test->view_reverse();
+    // cout << test;
 
     delete test;
     return 0;
