@@ -156,14 +156,22 @@ public:
     int count()
     {
         node *p = _first;
-        int toy = 0;
+        int num = 0;
         while (p)
         {
-            toy++;
-            cout << p->item.name << endl;
+            num++;
             p = p->next;
         }
-        return toy;
+        return num;
+    }
+
+    toy get(const unsigned int a)
+    {
+        node *p = _first;
+        for (int i = 0; i < a; i++)
+            p = p->next;
+        
+        return p->item;
     }
 
     friend ostream &operator<<(ostream &stream, const List *n)
@@ -217,7 +225,7 @@ int main(int argc, char *argv[])
     if (Open(&f, filename, "rb"))
     {
         struct toy current;
-        while(!feof(f))
+        while (!feof(f))
         {
             fread(&current, sizeof(struct toy), 1, f);
             list->add(current);
@@ -226,9 +234,8 @@ int main(int argc, char *argv[])
         Close(&f);
     }
 
-    cout << list->count() << endl;
-    return 0;
-    // return Menu();
+    // delete list;
+    return Menu();
 }
 
 int Menu()
@@ -336,74 +343,66 @@ int StrPadding(char str[], int n)
 void FileView()
 {
     CLEAR;
-    FILE *f;
-    if (Open(&f, filename, "rb"))
+
+    int count, pages_num, i, j;
+    struct toy current;
+    char choice;
+
+    count = list->count();
+    pages_num = count / TOY_PAGE + 1;
+    while (count >= TOY_PAGE)
+        count = count - TOY_PAGE;
+
+    for (i = 0; i < pages_num; i++)
     {
-        int count, pages_num, i, j;
-        struct toy current;
-        char choice;
+        CLEAR;
+        puts(TABLE_TOP);
 
-        fseek(f, 0, SEEK_END);
-        count = ftell(f) / sizeof(struct toy);
-        pages_num = count / TOY_PAGE + 1;
-        while (count >= TOY_PAGE)
-            count = count - TOY_PAGE;
-        fseek(f, 0, SEEK_SET);
+        if (i + 1 == pages_num && count == 0)
+            break;
 
-        for (i = 0; i < pages_num; i++)
+        for (j = 0; j < TOY_PAGE; j++)
         {
-            CLEAR;
-            puts(TABLE_TOP);
-
-            if (i + 1 == pages_num && count == 0)
+            if (j + i * TOY_PAGE + 1 == list->count())
                 break;
+            else if (i == 0)
+                current = list->get(j);
+            else
+                current = list->get(j + i * TOY_PAGE + 1);
 
-            for (j = 0; j < TOY_PAGE; j++)
+            puts(TABLE_CONNECT);
+            printf(TABLE_DATA, current.name, StrPadding(current.name, 41), " ", current.price, current.quantity, current.age_min, current.age_max);
+        }
+        puts(TABLE_BOTTOM);
+        printf("<--j   q-выход   l-->\n");
+
+        do
+        {
+            printf("Ввод: ");
+            while (getchar() != '\n')
+                ;
+            while (!scanf("%c", &choice))
             {
-                fread(&current, sizeof(struct toy), 1, f);
-                if (feof(f))
-                    break;
-
-                puts(TABLE_CONNECT);
-                printf(TABLE_DATA, current.name, StrPadding(current.name, 41), " ", current.price, current.quantity, current.age_min, current.age_max);
-            }
-            puts(TABLE_BOTTOM);
-            printf("<--j   q-выход   l-->\n");
-
-            do
-            {
-                printf("Ввод: ");
+                printf("Ошибка ввода!\nВвод: ");
                 while (getchar() != '\n')
                     ;
-                while (!scanf("%c", &choice))
-                {
-                    printf("Ошибка ввода!\nВвод: ");
-                    while (getchar() != '\n')
-                        ;
-                }
-
-                if (choice != 'j' && choice != 'q' && choice != 'l')
-                    printf("Неизвестная команда!\n");
-            } while (choice != 'j' && choice != 'q' && choice != 'l');
-
-            if (choice == 'j')
-            {
-                if (i == 0)
-                    break;
-                else if (i + 1 == pages_num)
-                    fseek(f, -sizeof(struct toy) * (count + TOY_PAGE), SEEK_CUR);
-                else
-                    fseek(f, -sizeof(struct toy) * TOY_PAGE * 2, SEEK_CUR);
-
-                i -= 2;
             }
-            else if (choice == 'q')
-            {
+
+            if (choice != 'j' && choice != 'q' && choice != 'l')
+                printf("Неизвестная команда!\n");
+        } while (choice != 'j' && choice != 'q' && choice != 'l');
+
+        if (choice == 'j')
+        {
+            if (i == 0)
                 break;
-            }
-        }
 
-        Close(&f);
+            i -= 2;
+        }
+        else if (choice == 'q')
+        {
+            break;
+        }
     }
 }
 
