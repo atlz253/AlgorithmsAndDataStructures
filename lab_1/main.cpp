@@ -383,7 +383,6 @@ void FileView()
         }
         puts(TABLE_BOTTOM);
         printf("<--j   q-выход   l-->\n");
-        cout << list << endl;
 
         do
         {
@@ -476,7 +475,6 @@ void ToySearch()
     CLEAR;
     int age;
     double price;
-    struct toy current;
 
     do
     {
@@ -493,24 +491,16 @@ void ToySearch()
     while (getchar() != '\n')
         ;
 
-    FILE *f;
-    if (Open(&f, filename, "rb"))
+    puts(TABLE_TOP);
+    for (int i = 0; i < list->count(); i++)
     {
-        puts(TABLE_TOP);
-        while (!feof(f))
+        if (list->get(i).age_min <= age && list->get(i).age_max >= age && list->get(i).price <= price)
         {
-            fread(&current, sizeof(struct toy), 1, f);
-            if (feof(f))
-                break;
-
-            if (current.age_min <= age && current.age_max >= age && current.price <= price)
-            {
-                puts(TABLE_CONNECT);
-                printf(TABLE_DATA, current.name, StrPadding(current.name, 41), " ", current.price, current.quantity, current.age_min, current.age_max);
-            }
+            puts(TABLE_CONNECT);
+            printf(TABLE_DATA, list->get(i).name, StrPadding(list->get(i).name, 41), " ", list->get(i).price, list->get(i).quantity, list->get(i).age_min, list->get(i).age_max);
         }
-        puts(TABLE_BOTTOM);
     }
+    puts(TABLE_BOTTOM);
 
     printf("Для продолжения нажмите любую клавишу...");
     getchar();
