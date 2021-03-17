@@ -232,7 +232,7 @@ int main(int argc, char *argv[])
     if (Open(&f, filename, "rb"))
     {
         struct toy current;
-        fread(&current, sizeof(struct toy), 1, f);
+        fread(&current, sizeof(struct toy), 1, f); // TODO: создание пустого списка, если файла не существует/нет записей
         while (!feof(f))
         {
             list->add(current);
@@ -371,18 +371,19 @@ void FileView()
 
         for (j = 0; j < TOY_PAGE; j++)
         {
-            if (j + i * TOY_PAGE + 1 == list->count())
+            if (j + i * TOY_PAGE == list->count())
                 break;
             else if (i == 0)
                 current = list->get(j);
             else
-                current = list->get(j + i * TOY_PAGE + 1);
+                current = list->get(j + i * TOY_PAGE);
 
             puts(TABLE_CONNECT);
             printf(TABLE_DATA, current.name, StrPadding(current.name, 41), " ", current.price, current.quantity, current.age_min, current.age_max);
         }
         puts(TABLE_BOTTOM);
         printf("<--j   q-выход   l-->\n");
+        cout << list << endl;
 
         do
         {
