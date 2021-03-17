@@ -5,7 +5,7 @@
 #define TABLE_CONNECT "╠══════════════════════════════════════════╬════════╬════════╬════════════╬════════════╣"
 #define TABLE_DATA "║ %s%*s║ %-7g║ %-7d║ %-11d║ %-11d║\n"
 #define TABLE_BOTTOM "╚══════════════════════════════════════════╩════════╩════════╩════════════╩════════════╝"
-#define CLEAR_CONSOLE 1
+#define CLEAR_CONSOLE 0
 
 #if defined(_WIN64) || defined(_WIN32)
 #include <windows.h>
@@ -20,6 +20,7 @@
 
 #define N 81
 #define TOY_PAGE 10
+#define DEBUG 1
 
 using namespace std;
 
@@ -74,6 +75,12 @@ private:
             new_node->next = _first;
             _first->prev = new_node;
             _first = new_node;
+
+#if DEBUG
+        cout << "Добавление " << a.name << " в начало списка" << endl;
+        view();
+        view_reverse();
+#endif
         }
     }
 
@@ -170,7 +177,7 @@ public:
         node *p = _first;
         for (int i = 0; i < a; i++)
             p = p->next;
-        
+
         return p->item;
     }
 
@@ -181,7 +188,7 @@ public:
             node *p = n->_first;
             do
             {
-                stream << p->item.price;
+                stream << p->item.name;
                 if (p->next)
                     stream << " -> ";
                 p = p->next;
@@ -225,10 +232,11 @@ int main(int argc, char *argv[])
     if (Open(&f, filename, "rb"))
     {
         struct toy current;
+        fread(&current, sizeof(struct toy), 1, f);
         while (!feof(f))
         {
-            fread(&current, sizeof(struct toy), 1, f);
             list->add(current);
+            fread(&current, sizeof(struct toy), 1, f);
         }
 
         Close(&f);
@@ -438,23 +446,18 @@ void GetString(char str[N], char message[])
 void AddData()
 {
     CLEAR;
-    FILE *f;
-    if (Open(&f, filename, "ab"))
-    {
-        struct toy newt;
-        getchar();
+    struct toy newt;
+    getchar();
 
-        GetString(newt.name, "Введите название игрушки: ");
+    GetString(newt.name, "Введите название игрушки: ");
 
-        Input("%lf", &newt.price, "Введите цену: ");
-        Input("%d", &newt.quantity, "Введите количество: ");
-        Input("%d", &newt.age_min, "Введите минимальный возраст: ");
-        Input("%d", &newt.age_max, "Введите максимальный возраст: ");
+    Input("%lf", &newt.price, "Введите цену: ");
+    Input("%d", &newt.quantity, "Введите количество: ");
+    Input("%d", &newt.age_min, "Введите минимальный возраст: ");
+    Input("%d", &newt.age_max, "Введите максимальный возраст: ");
 
-        fwrite(&newt, sizeof(struct toy), 1, f);
-        printf("Запись завершена!\n");
-        Close(&f);
-    }
+    list->add(newt);
+    printf("Запись завершена!\n");
 }
 
 void CreateFilef()
