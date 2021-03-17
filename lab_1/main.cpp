@@ -148,7 +148,7 @@ public:
             node *p = _last;
             do
             {
-                cout << p->item.price;
+                cout << p->item.name;
                 if (p->prev)
                     cout << " -> ";
                 p = p->prev;
@@ -157,6 +157,37 @@ public:
         else
         {
             cout << "список пуст!" << endl;
+        }
+    }
+
+    void del(const unsigned int a)
+    {
+        node *p = _first;
+        for (int i = 0; i < a; i++)
+            p = p->next;
+        
+        if (p->next)
+        {
+            p->next->prev = p->prev;
+
+            if (p->prev)
+                p->prev->next = p->next;
+            else
+                _first = p->next;
+        }
+        else
+        {
+            if (p->prev)
+            {
+                p->prev->next = nullptr;
+                _last = p->prev;
+            }
+            else
+            {
+                _first = nullptr;
+                _last = nullptr;
+            }
+                
         }
     }
 
@@ -382,6 +413,9 @@ void FileView()
             printf(TABLE_DATA, current.name, StrPadding(current.name, 41), " ", current.price, current.quantity, current.age_min, current.age_max);
         }
         puts(TABLE_BOTTOM);
+        cout << list << endl;
+        list->view_reverse();
+        cout << endl;
         printf("<--j   q-выход   l-->\n");
 
         do
@@ -554,48 +588,33 @@ void ToyDelete()
         ;
     GetString(del, "Введите строку: ");
 
-    if (Open(&f, filename, "rb"))
+    for (int i = 0; i < list->count(); i++)
     {
-        if (Open(&t, "_temp", "wb"))
+        current = list->get(i);
+        if (!strcmp(current.name, del))
         {
-            fread(&current, sizeof(struct toy), 1, f);
-            while (!feof(f))
+            puts(TABLE_TOP);
+            puts(TABLE_CONNECT);
+            printf(TABLE_DATA, current.name, StrPadding(current.name, 41), " ", current.price, current.quantity, current.age_min, current.age_max);
+            puts(TABLE_BOTTOM);
+
+            do
             {
-                if (!strcmp(current.name, del))
+                printf("\nВы хотите удалить данный товар?\ny - да n - нет\n");
+                while (scanf("%c", &choice) != 1)
                 {
-                    puts(TABLE_TOP);
-                    puts(TABLE_CONNECT);
-                    printf(TABLE_DATA, current.name, StrPadding(current.name, 41), " ", current.price, current.quantity, current.age_min, current.age_max);
-                    puts(TABLE_BOTTOM);
-
-                    do
-                    {
-                        printf("\nВы хотите удалить данный товар?\ny - да n - нет\n");
-                        while (scanf("%c", &choice) != 1)
-                        {
-                            while (getchar() != '\n')
-                                ;
-                            printf("Ошибка ввода!\nВы хотите удалить данный товар?\ny - да n - нет\n");
-                        }
-                        if (choice != 'y' && choice != 'n')
-                            printf("Ошибка ввода!\n");
-                    } while (choice != 'y' && choice != 'n');
-
-                    if (choice == 'n')
-                        fwrite(&current, sizeof(struct toy), 1, t);
+                    while (getchar() != '\n')
+                        ;
+                    printf("Ошибка ввода!\nВы хотите удалить данный товар?\ny - да n - нет\n");
                 }
-                else
-                {
-                    fwrite(&current, sizeof(struct toy), 1, t);
-                }
+                if (choice != 'y' && choice != 'n')
+                    printf("Ошибка ввода!\n");
+            } while (choice != 'y' && choice != 'n');
 
-                fread(&current, sizeof(struct toy), 1, f);
+            if (choice == 'y')
+            {
+                list->del(i);
             }
-
-            Close(&f);
-            remove(filename);
-            Close(&t);
-            rename("_temp", filename);
         }
     }
 }
