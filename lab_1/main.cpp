@@ -509,51 +509,35 @@ void ToySearch()
 void MaxConstructor()
 {
     CLEAR;
-    FILE *f;
-    if (Open(&f, filename, "rb"))
+    double max_price = 0;
+    toy current;
+
+    for (int i = 0; i < list->count(); i++)
     {
-        int i;
-        double max_price = 0;
-        struct toy current;
+        current = list->get(i);
+        for (int j = 0; j < N; j++)
+            if (current.name[j] == -48 && current.name[j + 1] == -102 && current.name[j + 20] == -47 && current.name[j + 21] == -128 && max_price < current.price)
+                max_price = current.price;
+    }
 
-        fread(&current, sizeof(struct toy), 1, f);
-        while (!feof(f))
+    for (int i = 0; i < list->count(); i++)
+    {
+        current = list->get(i);
+        for (int j = 0; j < N; j++)
         {
-            for (i = 0; i < N; i++)
-            {
-                if (current.name[i] == -48 && current.name[i + 1] == -102 && current.name[i + 20] == -47 && current.name[i + 21] == -128 && max_price < current.price)
-                { // Проверка 2 байт 'К' и 'р'
-                    max_price = current.price;
-                }
+            if (current.name[j] == -48 && current.name[j + 1] == -102 && current.name[j + 20] == -47 && current.name[j + 21] == -128 && max_price == current.price)
+            { // Проверка 2 байт 'К' и 'р'
+                puts(TABLE_TOP);
+                puts(TABLE_CONNECT);
+                printf(TABLE_DATA, current.name, StrPadding(current.name, 41), " ", current.price, current.quantity, current.age_min, current.age_max);
+                puts(TABLE_BOTTOM);
+
+                while (getchar() != '\n')
+                    ;
+                printf("Для продолжение нажмите любую клавишу...");
+                getchar();
             }
-
-            fread(&current, sizeof(struct toy), 1, f);
         }
-        fseek(f, 0, SEEK_SET);
-
-        fread(&current, sizeof(struct toy), 1, f);
-        while (!feof(f))
-        {
-            for (i = 0; i < N; i++)
-            {
-                if (current.name[i] == -48 && current.name[i + 1] == -102 && current.name[i + 20] == -47 && current.name[i + 21] == -128 && max_price == current.price)
-                { // Проверка 2 байт 'К' и 'р'
-                    puts(TABLE_TOP);
-                    puts(TABLE_CONNECT);
-                    printf(TABLE_DATA, current.name, StrPadding(current.name, 41), " ", current.price, current.quantity, current.age_min, current.age_max);
-                    puts(TABLE_BOTTOM);
-
-                    while (getchar() != '\n')
-                        ;
-                    printf("Для продолжение нажмите любую клавишу...");
-                    getchar();
-                    fseek(f, 0, SEEK_END);
-                }
-            }
-            fread(&current, sizeof(struct toy), 1, f);
-        }
-
-        Close(&f);
     }
 }
 
