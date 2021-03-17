@@ -212,6 +212,15 @@ public:
         return p->item;
     }
 
+    void set(const unsigned int a, const toy t)
+    {
+        node *p = _first;
+        for (int i = 0; i < a; i++)
+            p = p->next;
+        
+        p->item = t;
+    }
+
     friend ostream &operator<<(ostream &stream, const List *n)
     {
         if (n->_first)
@@ -622,7 +631,6 @@ void ToyDelete()
 void ToyEdit()
 {
     CLEAR;
-    FILE *f;
     int int_choice;
     char edit[N], choice;
     struct toy current;
@@ -631,78 +639,68 @@ void ToyEdit()
         ;
     GetString(edit, "Введите строку: ");
 
-    if (Open(&f, filename, "rb+"))
+    for (int i = 0; i < list->count(); i++)
     {
-        fread(&current, sizeof(struct toy), 1, f);
-        while (!feof(f))
+        current = list->get(i);
+        if (!strcmp(current.name, edit))
         {
-            if (!strcmp(current.name, edit))
-            {
-                puts(TABLE_TOP);
-                puts(TABLE_CONNECT);
-                printf(TABLE_DATA, current.name, StrPadding(current.name, 41), " ", current.price, current.quantity, current.age_min, current.age_max);
-                puts(TABLE_BOTTOM);
+            puts(TABLE_TOP);
+            puts(TABLE_CONNECT);
+            printf(TABLE_DATA, current.name, StrPadding(current.name, 41), " ", current.price, current.quantity, current.age_min, current.age_max);
+            puts(TABLE_BOTTOM);
 
+            do
+            {
+                printf("\nВы хотите изменить данный товар?\ny - да n - нет\n");
+                while (scanf("%c", &choice) != 1)
+                {
+                    while (getchar() != '\n')
+                        ;
+                    printf("Ошибка ввода!\nВы хотите изменить данный товар?\ny - да n - нет ");
+                }
+                if (choice != 'y' && choice != 'n')
+                    printf("Ошибка ввода!\n");
+            } while (choice != 'y' && choice != 'n');
+
+            if (choice == 'y')
+            {
                 do
                 {
-                    printf("\nВы хотите изменить данный товар?\ny - да n - нет\n");
-                    while (scanf("%c", &choice) != 1)
+                    puts("1. Изменить название");
+                    puts("2. Изменить цену");
+                    puts("3. Изменить количество");
+                    puts("4. Изменить минимальный возраст");
+                    puts("5. Изменить максимальный возраст");
+                    puts("0. Завершить редактирование");
+                    Input("%d", &int_choice, "Введите пункт: ");
+                    CLEAR;
+
+                    switch (int_choice)
                     {
-                        while (getchar() != '\n')
-                            ;
-                        printf("Ошибка ввода!\nВы хотите изменить данный товар?\ny - да n - нет ");
+                    case 1:
+                        GetString(current.name, "Введите название игрушки: ");
+                        break;
+                    case 2:
+                        Input("%lf", &current.price, "Введите цену: ");
+                        break;
+                    case 3:
+                        Input("%d", &current.quantity, "Введите количество: ");
+                        break;
+                    case 4:
+                        Input("%d", &current.age_min, "Введите минимальный возраст: ");
+                        break;
+                    case 5:
+                        Input("%d", &current.age_max, "Введите максимальный возраст: ");
+                        break;
+                    case 0:
+                        break;
+                    default:
+                        puts("Введен неверный пункт меню!");
                     }
-                    if (choice != 'y' && choice != 'n')
-                        printf("Ошибка ввода!\n");
-                } while (choice != 'y' && choice != 'n');
-
-                if (choice == 'y')
-                {
-                    do
-                    {
-                        puts("1. Изменить название");
-                        puts("2. Изменить цену");
-                        puts("3. Изменить количество");
-                        puts("4. Изменить минимальный возраст");
-                        puts("5. Изменить максимальный возраст");
-                        puts("0. Завершить редактирование");
-                        Input("%d", &int_choice, "Введите пункт: ");
-                        CLEAR;
-
-                        switch (int_choice)
-                        {
-                        case 1:
-                            GetString(current.name, "Введите название игрушки: ");
-                            break;
-                        case 2:
-                            Input("%lf", &current.price, "Введите цену: ");
-                            break;
-                        case 3:
-                            Input("%d", &current.quantity, "Введите количество: ");
-                            break;
-                        case 4:
-                            Input("%d", &current.age_min, "Введите минимальный возраст: ");
-                            break;
-                        case 5:
-                            Input("%d", &current.age_max, "Введите максимальный возраст: ");
-                            break;
-                        case 0:
-                            break;
-                        default:
-                            puts("Введен неверный пункт меню!");
-                        }
-                    } while (int_choice);
-
-                    fseek(f, -sizeof(struct toy), SEEK_CUR);
-                    fwrite(&current, sizeof(struct toy), 1, f);
-
-                    fseek(f, 0, SEEK_END);
-                }
+                } while (int_choice);
             }
-
-            fread(&current, sizeof(struct toy), 1, f);
         }
 
-        Close(&f);
+        list->set(i, current);
     }
 }
