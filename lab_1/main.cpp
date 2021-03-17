@@ -475,6 +475,7 @@ void ToySearch()
     CLEAR;
     int age;
     double price;
+    toy current;
 
     do
     {
@@ -494,10 +495,11 @@ void ToySearch()
     puts(TABLE_TOP);
     for (int i = 0; i < list->count(); i++)
     {
-        if (list->get(i).age_min <= age && list->get(i).age_max >= age && list->get(i).price <= price)
+        current = list->get(i);
+        if (current.age_min <= age && current.age_max >= age && current.price <= price)
         {
             puts(TABLE_CONNECT);
-            printf(TABLE_DATA, list->get(i).name, StrPadding(list->get(i).name, 41), " ", list->get(i).price, list->get(i).quantity, list->get(i).age_min, list->get(i).age_max);
+            printf(TABLE_DATA, current.name, StrPadding(current.name, 41), " ", current.price, current.quantity, current.age_min, current.age_max);
         }
     }
     puts(TABLE_BOTTOM);
