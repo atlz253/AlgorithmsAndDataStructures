@@ -1,5 +1,10 @@
 {
     "files.associations": {
-        "stdlib.h": "c"
+        "iomanip": "cpp",
+        "iosfwd": "cpp",
+        "iostream": "cpp",
+        "ostream": "cpp",
+        "new": "cpp",
+        "*.tcc": "cpp"
     }
 }
