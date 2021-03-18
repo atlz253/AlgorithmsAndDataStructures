@@ -23,7 +23,7 @@
 
 using namespace std;
 
-int Menu();
+void Menu();
 int Open(FILE **file, char path[], char rights[]);
 void Close(FILE **file);
 int StrPadding(char str[], int space);
@@ -280,11 +280,24 @@ int main(int argc, char *argv[])
         Close(&f);
     }
 
+    Menu();
+
+    if (Open(&f, filename, "wb"))
+    {
+        toy current;
+
+        for (int i = 0; i < list->count(); i++)
+        {
+            current = list->get(i);
+            fwrite(&current, sizeof(struct toy), 1, f);
+        }
+    }
+
     // delete list;
-    return Menu();
+    return 0;
 }
 
-int Menu()
+void Menu()
 {
     int choice;
 
@@ -339,8 +352,6 @@ int Menu()
         }
 
     } while (choice);
-
-    return 0;
 }
 
 int Open(FILE **file, char path[], char rights[])
@@ -420,18 +431,14 @@ void FileView()
 
             if (current.avaible.date[2] == '.')
                 strcpy(avaible, current.avaible.date);
+            else if (current.avaible.status)
+                strcpy(avaible, "Есть");
             else
-                if (current.avaible.status)
-                    strcpy(avaible, "Есть");
-                else
-                    strcpy(avaible, "Нет");
+                strcpy(avaible, "Нет");
 
             printf(TABLE_DATA, current.name, StrPadding(current.name, 41), " ", current.price, current.quantity, current.age_min, current.age_max, avaible, StrPadding(avaible, 9), " ");
         }
         puts(TABLE_BOTTOM);
-        cout << list << endl;
-        list->view_reverse();
-        cout << endl;
         printf("<--j   q-выход   l-->\n");
 
         do
@@ -519,20 +526,19 @@ void AddData()
                 ;
         }
 
-        switch(choice)
+        switch (choice)
         {
-            case 1:
-                newt.avaible.status = true;
-                break;
-            case 2:
-                newt.avaible.status = false;
-                break;
-            case 3:
-                Input("%s", &newt.avaible.date, "Введите дату поступления: ");
-                break;
+        case 1:
+            newt.avaible.status = true;
+            break;
+        case 2:
+            newt.avaible.status = false;
+            break;
+        case 3:
+            Input("%s", &newt.avaible.date, "Введите дату поступления: ");
+            break;
         }
     } while (choice < 1 || choice > 3);
-    
 
     list->add(newt);
     printf("Запись завершена!\n");
@@ -713,31 +719,29 @@ void ToyEdit()
                     switch (int_choice)
                     {
                     case 1:
-            GetString(current.name, "Введите название игрушки: ");
-            break;
-        case 2:
-            Input("%lf", &current.price, "Введите цену: ");
-            break;
-        case 3:
-            Input("%d", &current.quantity, "Введите количество: ");
-            break;
-        case 4:
-            Input("%d", &current.age_min, "Введите минимальный возраст: ");
-            break;
-        case 5:
-            Input("%d", &current.age_max, "Введите максимальный возраст: ");
-            break;
-        case 0:
-            break;
-        default:
-            puts("Введен неверный пункт меню!");
+                        GetString(current.name, "Введите название игрушки: ");
+                        break;
+                    case 2:
+                        Input("%lf", &current.price, "Введите цену: ");
+                        break;
+                    case 3:
+                        Input("%d", &current.quantity, "Введите количество: ");
+                        break;
+                    case 4:
+                        Input("%d", &current.age_min, "Введите минимальный возраст: ");
+                        break;
+                    case 5:
+                        Input("%d", &current.age_max, "Введите максимальный возраст: ");
+                        break;
+                    case 0:
+                        break;
+                    default:
+                        puts("Введен неверный пункт меню!");
+                    }
+                } while (int_choice);
+            }
         }
-}
-while (int_choice)
-    ;
-}
-}
 
-list->set(i, current);
-}
+        list->set(i, current);
+    }
 }
