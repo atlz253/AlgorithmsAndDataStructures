@@ -5,7 +5,7 @@
 #define TABLE_CONNECT "╠══════════════════════════════════════════╬════════╬════════╬════════════╬════════════╬══════════╣"
 #define TABLE_DATA "║ %s%*s║ %-7g║ %-7d║ %-11d║ %-11d║ %s%*s║\n"
 #define TABLE_BOTTOM "╚══════════════════════════════════════════╩════════╩════════╩════════════╩════════════╩══════════╝"
-#define CLEAR_CONSOLE 0
+#define CLEAR_CONSOLE 1
 
 #if defined(_WIN64) || defined(_WIN32)
 #include <windows.h>
