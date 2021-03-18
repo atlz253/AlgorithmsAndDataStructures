@@ -1,10 +1,10 @@
 #include <iostream>
 #include <cstring>
 
-#define TABLE_TOP "╔══════════════════════════════════════════╦════════╦════════╦════════════╦════════════╗\n║ Название игрушки                         ║ Цена   ║ Кол-во ║ Возраст от ║ Возраст до ║"
-#define TABLE_CONNECT "╠══════════════════════════════════════════╬════════╬════════╬════════════╬════════════╣"
-#define TABLE_DATA "║ %s%*s║ %-7g║ %-7d║ %-11d║ %-11d║\n"
-#define TABLE_BOTTOM "╚══════════════════════════════════════════╩════════╩════════╩════════════╩════════════╝"
+#define TABLE_TOP "╔══════════════════════════════════════════╦════════╦════════╦════════════╦════════════╦══════════╗\n║ Название игрушки                         ║ Цена   ║ Кол-во ║ Возраст от ║ Возраст до ║ Наличие  ║"
+#define TABLE_CONNECT "╠══════════════════════════════════════════╬════════╬════════╬════════════╬════════════╬══════════╣"
+#define TABLE_DATA "║ %s%*s║ %-7g║ %-7d║ %-11d║ %-11d║ %s%*s║\n"
+#define TABLE_BOTTOM "╚══════════════════════════════════════════╩════════╩════════╩════════════╩════════════╩══════════╝"
 #define CLEAR_CONSOLE 0
 
 #if defined(_WIN64) || defined(_WIN32)
@@ -20,7 +20,6 @@
 
 #define N 81
 #define TOY_PAGE 10
-#define DEBUG 1
 
 using namespace std;
 
@@ -45,6 +44,12 @@ typedef struct toy
     int quantity;
     int age_min;
     int age_max;
+    union
+    {
+        bool status;
+        char date[9];
+    } avaible;
+
 } toy;
 
 class List
@@ -75,12 +80,6 @@ private:
             new_node->next = _first;
             _first->prev = new_node;
             _first = new_node;
-
-#if DEBUG
-        cout << "Добавление " << a.name << " в начало списка" << endl;
-        view();
-        view_reverse();
-#endif
         }
     }
 
@@ -165,7 +164,7 @@ public:
         node *p = _first;
         for (int i = 0; i < a; i++)
             p = p->next;
-        
+
         if (p->next)
         {
             p->next->prev = p->prev;
@@ -187,7 +186,6 @@ public:
                 _first = nullptr;
                 _last = nullptr;
             }
-                
         }
     }
 
@@ -217,7 +215,7 @@ public:
         node *p = _first;
         for (int i = 0; i < a; i++)
             p = p->next;
-        
+
         p->item = t;
     }
 
@@ -272,7 +270,7 @@ int main(int argc, char *argv[])
     if (Open(&f, filename, "rb"))
     {
         struct toy current;
-        fread(&current, sizeof(struct toy), 1, f); // TODO: создание пустого списка, если файла не существует/нет записей
+        fread(&current, sizeof(struct toy), 1, f);
         while (!feof(f))
         {
             list->add(current);
@@ -394,7 +392,7 @@ void FileView()
 
     int count, pages_num, i, j;
     struct toy current;
-    char choice;
+    char choice, avaible[9];
 
     count = list->count();
     pages_num = count / TOY_PAGE + 1;
@@ -419,7 +417,16 @@ void FileView()
                 current = list->get(j + i * TOY_PAGE);
 
             puts(TABLE_CONNECT);
-            printf(TABLE_DATA, current.name, StrPadding(current.name, 41), " ", current.price, current.quantity, current.age_min, current.age_max);
+
+            if (current.avaible.date[2] == '.')
+                strcpy(avaible, current.avaible.date);
+            else
+                if (current.avaible.status)
+                    strcpy(avaible, "Есть");
+                else
+                    strcpy(avaible, "Нет");
+
+            printf(TABLE_DATA, current.name, StrPadding(current.name, 41), " ", current.price, current.quantity, current.age_min, current.age_max, avaible, StrPadding(avaible, 9), " ");
         }
         puts(TABLE_BOTTOM);
         cout << list << endl;
@@ -489,6 +496,7 @@ void GetString(char str[N], char message[])
 void AddData()
 {
     CLEAR;
+    int choice;
     struct toy newt;
     getchar();
 
@@ -498,6 +506,33 @@ void AddData()
     Input("%d", &newt.quantity, "Введите количество: ");
     Input("%d", &newt.age_min, "Введите минимальный возраст: ");
     Input("%d", &newt.age_max, "Введите максимальный возраст: ");
+
+    do
+    {
+        puts("1. товар присутствует в магазине");
+        puts("2. товар отсутствует в магазине");
+        puts("3. ввести дату поступления в магазин");
+        while (!scanf("%d", &choice))
+        {
+            printf("Введены неверные данные!\nВведите пункт меню: ");
+            while (getchar() != '\n')
+                ;
+        }
+
+        switch(choice)
+        {
+            case 1:
+                newt.avaible.status = true;
+                break;
+            case 2:
+                newt.avaible.status = false;
+                break;
+            case 3:
+                Input("%s", &newt.avaible.date, "Введите дату поступления: ");
+                break;
+        }
+    } while (choice < 1 || choice > 3);
+    
 
     list->add(newt);
     printf("Запись завершена!\n");
@@ -678,29 +713,31 @@ void ToyEdit()
                     switch (int_choice)
                     {
                     case 1:
-                        GetString(current.name, "Введите название игрушки: ");
-                        break;
-                    case 2:
-                        Input("%lf", &current.price, "Введите цену: ");
-                        break;
-                    case 3:
-                        Input("%d", &current.quantity, "Введите количество: ");
-                        break;
-                    case 4:
-                        Input("%d", &current.age_min, "Введите минимальный возраст: ");
-                        break;
-                    case 5:
-                        Input("%d", &current.age_max, "Введите максимальный возраст: ");
-                        break;
-                    case 0:
-                        break;
-                    default:
-                        puts("Введен неверный пункт меню!");
-                    }
-                } while (int_choice);
-            }
+            GetString(current.name, "Введите название игрушки: ");
+            break;
+        case 2:
+            Input("%lf", &current.price, "Введите цену: ");
+            break;
+        case 3:
+            Input("%d", &current.quantity, "Введите количество: ");
+            break;
+        case 4:
+            Input("%d", &current.age_min, "Введите минимальный возраст: ");
+            break;
+        case 5:
+            Input("%d", &current.age_max, "Введите максимальный возраст: ");
+            break;
+        case 0:
+            break;
+        default:
+            puts("Введен неверный пункт меню!");
         }
+}
+while (int_choice)
+    ;
+}
+}
 
-        list->set(i, current);
-    }
+list->set(i, current);
+}
 }
