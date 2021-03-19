@@ -438,7 +438,7 @@ int StrPadding(char str[], int n)
 char *VarField(toy a)
 {
     if (a.variant == 0)
-        return a.avaible.date;
+        return a.avaible.date; // FIXME возврат даты поступления
     else if (a.avaible.status)
         return "Есть";
     else
@@ -465,7 +465,10 @@ void View()
 
                 current = list->getn();
 
-                printf(TABLE_DATA, current.name, StrPadding(current.name, 41), " ", current.price, current.quantity, current.age_min, current.age_max, VarField(current), StrPadding(VarField(current), 9), " ");
+                printf(
+                    TABLE_DATA, current.name, StrPadding(current.name, 41),
+                    " ", current.price, current.quantity, current.age_min,
+                    current.age_max, VarField(current), StrPadding(VarField(current), 9), " ");
 
                 if (list->eol())
                     break;
@@ -622,14 +625,10 @@ void ToySearch()
         {
             puts(TABLE_CONNECT);
 
-            if (current.avaible.date[2] == '.')
-                strcpy(avaible, current.avaible.date);
-            else if (current.avaible.status)
-                strcpy(avaible, "Есть");
-            else
-                strcpy(avaible, "Нет");
-
-            printf(TABLE_DATA, current.name, StrPadding(current.name, 41), " ", current.price, current.quantity, current.age_min, current.age_max, avaible, StrPadding(avaible, 9), " ");
+            printf(
+                    TABLE_DATA, current.name, StrPadding(current.name, 41),
+                    " ", current.price, current.quantity, current.age_min,
+                    current.age_max, VarField(current), StrPadding(VarField(current), 9), " ");
         }
     }
     puts(TABLE_BOTTOM);
@@ -662,15 +661,10 @@ void MaxConstructor()
             { // Проверка 2 байт 'К' и 'р'
                 puts(TABLE_TOP);
                 puts(TABLE_CONNECT);
-
-                if (current.avaible.date[2] == '.')
-                    strcpy(avaible, current.avaible.date);
-                else if (current.avaible.status)
-                    strcpy(avaible, "Есть");
-                else
-                    strcpy(avaible, "Нет");
-
-                printf(TABLE_DATA, current.name, StrPadding(current.name, 41), " ", current.price, current.quantity, current.age_min, current.age_max, avaible, StrPadding(avaible, 9), " ");
+                printf(
+                    TABLE_DATA, current.name, StrPadding(current.name, 41),
+                    " ", current.price, current.quantity, current.age_min,
+                    current.age_max, VarField(current), StrPadding(VarField(current), 9), " ");
                 puts(TABLE_BOTTOM);
 
                 STDINCLEAR;
@@ -699,15 +693,10 @@ void ToyDelete()
         {
             puts(TABLE_TOP);
             puts(TABLE_CONNECT);
-
-            if (current.avaible.date[2] == '.')
-                strcpy(avaible, current.avaible.date);
-            else if (current.avaible.status)
-                strcpy(avaible, "Есть");
-            else
-                strcpy(avaible, "Нет");
-
-            printf(TABLE_DATA, current.name, StrPadding(current.name, 41), " ", current.price, current.quantity, current.age_min, current.age_max, avaible, StrPadding(avaible, 9), " ");
+            printf(
+                    TABLE_DATA, current.name, StrPadding(current.name, 41),
+                    " ", current.price, current.quantity, current.age_min,
+                    current.age_max, VarField(current), StrPadding(VarField(current), 9), " ");
             puts(TABLE_BOTTOM);
 
             do
@@ -747,15 +736,10 @@ void ToyEdit()
         {
             puts(TABLE_TOP);
             puts(TABLE_CONNECT);
-
-            if (current.avaible.date[2] == '.')
-                strcpy(avaible, current.avaible.date);
-            else if (current.avaible.status)
-                strcpy(avaible, "Есть");
-            else
-                strcpy(avaible, "Нет");
-
-            printf(TABLE_DATA, current.name, StrPadding(current.name, 41), " ", current.price, current.quantity, current.age_min, current.age_max, avaible, StrPadding(avaible, 9), " ");
+            printf(
+                    TABLE_DATA, current.name, StrPadding(current.name, 41),
+                    " ", current.price, current.quantity, current.age_min,
+                    current.age_max, VarField(current), StrPadding(VarField(current), 9), " ");
             puts(TABLE_BOTTOM);
 
             do
@@ -779,6 +763,7 @@ void ToyEdit()
                     puts("3. Изменить количество");
                     puts("4. Изменить минимальный возраст");
                     puts("5. Изменить максимальный возраст"); //TODO: редактирование вариативного поля
+                    puts("6. Изменить наличие в магазине");
                     puts("0. Завершить редактирование");
                     Input("%d", &int_choice, "Введите пункт: ");
                     CLEAR;
@@ -799,6 +784,35 @@ void ToyEdit()
                         break;
                     case 5:
                         Input("%d", &current.age_max, "Введите максимальный возраст: ");
+                        break;
+                    case 6:
+                        do
+                        {
+                            puts("1. товар присутствует в магазине");
+                            puts("2. товар отсутствует в магазине");
+                            puts("3. ввести дату поступления в магазин");
+                            while (!scanf("%d", &choice))
+                            {
+                                printf("Введены неверные данные!\nВведите пункт меню: ");
+                                STDINCLEAR;
+                            }
+
+                            switch (choice)
+                            {
+                            case 1:
+                                current.avaible.status = true;
+                                current.variant = 1;
+                                break;
+                            case 2:
+                                current.avaible.status = false;
+                                current.variant = 1;
+                                break;
+                            case 3:
+                                Input("%s", &current.avaible.date, "Введите дату поступления: ");
+                                current.variant = 0;
+                                break;
+                            }
+                        } while (choice < 1 || choice > 3);
                         break;
                     case 0:
                         break;
