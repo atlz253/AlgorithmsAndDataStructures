@@ -423,7 +423,7 @@ void FileView()
             if (j + i * TOY_PAGE == list->count())
                 break;
             else if (i == 0)
-                current = list->get(j);
+                current = list->get(j); //FIXME: исправить
             else
                 current = list->get(j + i * TOY_PAGE);
 
@@ -558,6 +558,7 @@ void ToySearch()
 {
     CLEAR;
     int age;
+    char avaible[9];
     double price;
     toy current;
 
@@ -583,7 +584,15 @@ void ToySearch()
         if (current.age_min <= age && current.age_max >= age && current.price <= price)
         {
             puts(TABLE_CONNECT);
-            printf(TABLE_DATA, current.name, StrPadding(current.name, 41), " ", current.price, current.quantity, current.age_min, current.age_max);
+
+            if (current.avaible.date[2] == '.')
+                strcpy(avaible, current.avaible.date);
+            else if (current.avaible.status)
+                strcpy(avaible, "Есть");
+            else
+                strcpy(avaible, "Нет");
+
+            printf(TABLE_DATA, current.name, StrPadding(current.name, 41), " ", current.price, current.quantity, current.age_min, current.age_max, avaible, StrPadding(avaible, 9), " ");
         }
     }
     puts(TABLE_BOTTOM);
@@ -595,6 +604,7 @@ void ToySearch()
 void MaxConstructor()
 {
     CLEAR;
+    char avaible[9];
     double max_price = 0;
     toy current;
 
@@ -615,7 +625,15 @@ void MaxConstructor()
             { // Проверка 2 байт 'К' и 'р'
                 puts(TABLE_TOP);
                 puts(TABLE_CONNECT);
-                printf(TABLE_DATA, current.name, StrPadding(current.name, 41), " ", current.price, current.quantity, current.age_min, current.age_max);
+
+                if (current.avaible.date[2] == '.')
+                    strcpy(avaible, current.avaible.date);
+                else if (current.avaible.status)
+                    strcpy(avaible, "Есть");
+                else
+                    strcpy(avaible, "Нет");
+
+                printf(TABLE_DATA, current.name, StrPadding(current.name, 41), " ", current.price, current.quantity, current.age_min, current.age_max, avaible, StrPadding(avaible, 9), " ");
                 puts(TABLE_BOTTOM);
 
                 while (getchar() != '\n')
@@ -631,6 +649,7 @@ void ToyDelete()
 {
     CLEAR;
     FILE *f, *t;
+    char avaible[9];
     char del[N], choice;
     struct toy current;
 
@@ -645,7 +664,15 @@ void ToyDelete()
         {
             puts(TABLE_TOP);
             puts(TABLE_CONNECT);
-            printf(TABLE_DATA, current.name, StrPadding(current.name, 41), " ", current.price, current.quantity, current.age_min, current.age_max);
+
+            if (current.avaible.date[2] == '.')
+                strcpy(avaible, current.avaible.date);
+            else if (current.avaible.status)
+                strcpy(avaible, "Есть");
+            else
+                strcpy(avaible, "Нет");
+
+            printf(TABLE_DATA, current.name, StrPadding(current.name, 41), " ", current.price, current.quantity, current.age_min, current.age_max, avaible, StrPadding(avaible, 9), " ");
             puts(TABLE_BOTTOM);
 
             do
@@ -673,8 +700,8 @@ void ToyEdit()
 {
     CLEAR;
     int int_choice;
-    char edit[N], choice;
     struct toy current;
+    char edit[N], choice, avaible[9];
 
     while (getchar() != '\n')
         ;
@@ -687,7 +714,15 @@ void ToyEdit()
         {
             puts(TABLE_TOP);
             puts(TABLE_CONNECT);
-            printf(TABLE_DATA, current.name, StrPadding(current.name, 41), " ", current.price, current.quantity, current.age_min, current.age_max);
+
+            if (current.avaible.date[2] == '.')
+                strcpy(avaible, current.avaible.date);
+            else if (current.avaible.status)
+                strcpy(avaible, "Есть");
+            else
+                strcpy(avaible, "Нет");
+
+            printf(TABLE_DATA, current.name, StrPadding(current.name, 41), " ", current.price, current.quantity, current.age_min, current.age_max, avaible, StrPadding(avaible, 9), " ");
             puts(TABLE_BOTTOM);
 
             do
@@ -711,7 +746,7 @@ void ToyEdit()
                     puts("2. Изменить цену");
                     puts("3. Изменить количество");
                     puts("4. Изменить минимальный возраст");
-                    puts("5. Изменить максимальный возраст");
+                    puts("5. Изменить максимальный возраст"); //TODO: редактирование вариативного поля
                     puts("0. Завершить редактирование");
                     Input("%d", &int_choice, "Введите пункт: ");
                     CLEAR;
