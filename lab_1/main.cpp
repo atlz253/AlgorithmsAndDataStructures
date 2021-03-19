@@ -27,7 +27,7 @@ void Menu();
 int Open(FILE **file, char path[], char rights[]);
 void Close(FILE **file);
 int StrPadding(char str[], int space);
-void FileView();
+void View();
 void Input(char flag[], void *a, char message[]);
 void GetString(char str[N], char message[]);
 void AddData();
@@ -64,6 +64,8 @@ private:
 
     node *_first = nullptr;
     node *_last = nullptr;
+    node *_cur = nullptr;
+    bool _direction = true;
 
     void _add_start(const struct toy a)
     {
@@ -118,7 +120,7 @@ public:
             while (p->next && p->item.price < a.price)
                 p = p->next;
 
-            if (p->next || p->item.price > a.price)
+            if (p->next || p->item.price > a.price) //TODO: проверить условие p->item.price > a.price (возможно излишне)
             {
                 new_node->next = p;
                 new_node->prev = p->prev;
@@ -210,7 +212,41 @@ public:
         return p->item;
     }
 
-    void set(const unsigned int a, const toy t)
+    toy getn(void)
+    {
+        if (_direction)
+            if (_cur && _cur->next)
+                _cur = _cur->next;
+            else
+                _cur = _first;
+        else
+            if (_cur && _cur->prev)
+                _cur = _cur->prev;
+            else
+                _cur = _last;
+
+        return _cur->item; // TODO защитить, если в списке нету элементов
+    }
+
+    void changeDirection(void)
+    {
+        _direction = !_direction;
+    }
+
+    bool getDirection(void)
+    {
+        return _direction;
+    }
+
+    bool eol(void)
+    {
+        if (_direction && _cur == _last || !_direction && _cur == _first)
+            return true;
+        else
+            return false;
+    }
+
+    void set(const int a, const toy t)
     {
         node *p = _first;
         for (int i = 0; i < a; i++)
@@ -330,7 +366,7 @@ void Menu()
             AddData();
             break;
         case 3:
-            FileView();
+            View();
             break;
         case 4:
             ToySearch();
@@ -397,76 +433,73 @@ int StrPadding(char str[], int n)
     return n;
 }
 
-void FileView()
+void View()
 {
     CLEAR;
-
-    int count, pages_num, i, j;
-    struct toy current;
+    int i, j;
+    toy current;
     char choice, avaible[9];
 
-    count = list->count();
-    pages_num = count / TOY_PAGE + 1;
-    while (count >= TOY_PAGE)
-        count = count - TOY_PAGE;
-
-    for (i = 0; i < pages_num; i++)
+    while (true)
     {
         CLEAR;
-        puts(TABLE_TOP);
 
-        if (i + 1 == pages_num && count == 0)
-            break;
-
-        for (j = 0; j < TOY_PAGE; j++)
+        if (list->count())
         {
-            if (j + i * TOY_PAGE == list->count())
-                break;
-            else if (i == 0)
-                current = list->get(j); //FIXME: исправить
-            else
-                current = list->get(j + i * TOY_PAGE);
-
-            puts(TABLE_CONNECT);
-
-            if (current.avaible.date[2] == '.')
-                strcpy(avaible, current.avaible.date);
-            else if (current.avaible.status)
-                strcpy(avaible, "Есть");
-            else
-                strcpy(avaible, "Нет");
-
-            printf(TABLE_DATA, current.name, StrPadding(current.name, 41), " ", current.price, current.quantity, current.age_min, current.age_max, avaible, StrPadding(avaible, 9), " ");
-        }
-        puts(TABLE_BOTTOM);
-        printf("<--j   q-выход   l-->\n");
-
-        do
-        {
-            printf("Ввод: ");
-            while (getchar() != '\n')
-                ;
-            while (!scanf("%c", &choice))
+            puts(TABLE_TOP);
+            for (i = 0; i < TOY_PAGE; i++)
             {
-                printf("Ошибка ввода!\nВвод: ");
+                puts(TABLE_CONNECT);
+
+                current = list->getn();
+
+                if (current.avaible.date[2] == '.') // TODO переписать в функцию
+                    strcpy(avaible, current.avaible.date);
+                else if (current.avaible.status)
+                    strcpy(avaible, "Есть");
+                else
+                    strcpy(avaible, "Нет");
+
+                printf(TABLE_DATA, current.name, StrPadding(current.name, 41), " ", current.price, current.quantity, current.age_min, current.age_max, avaible, StrPadding(avaible, 9), " ");
+
+                if (list->eol())
+                    break;
+            }
+            puts(TABLE_BOTTOM);
+            puts("<--j   q-выход   l-->");
+
+            do
+            {
+                printf("Ввод: ");
                 while (getchar() != '\n')
                     ;
+                while (!scanf("%c", &choice))
+                {
+                    printf("Ошибка ввода!\nВвод: ");
+                    while (getchar() != '\n')
+                        ;
+                }
+
+                if (choice != 'j' && choice != 'q' && choice != 'l')
+                    printf("Неизвестная команда!\n");
+            } while (choice != 'j' && choice != 'q' && choice != 'l');
+
+            if (choice == 'j')
+            {
+                list->changeDirection();
+
+                for (j = 0; j < TOY_PAGE + i + 1; j++)
+                    list->getn();
+                
+                list->changeDirection();
             }
-
-            if (choice != 'j' && choice != 'q' && choice != 'l')
-                printf("Неизвестная команда!\n");
-        } while (choice != 'j' && choice != 'q' && choice != 'l');
-
-        if (choice == 'j')
-        {
-            if (i == 0)
+            else if (choice == 'q')
                 break;
-
-            i -= 2;
         }
-        else if (choice == 'q')
+        else
         {
-            break;
+            puts("В списке отсутствуют записи");
+            getchar();
         }
     }
 }
