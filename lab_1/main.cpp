@@ -6,6 +6,9 @@
 #define TABLE_DATA "║ %s%*s║ %-7g║ %-7d║ %-11d║ %-11d║ %s%*s║\n"
 #define TABLE_BOTTOM "╚══════════════════════════════════════════╩════════╩════════╩════════════╩════════════╩══════════╝"
 #define CLEAR_CONSOLE 1
+#define STDINCLEAR            \
+    while (getchar() != '\n') \
+        ;
 
 #if defined(_WIN64) || defined(_WIN32)
 #include <windows.h>
@@ -42,7 +45,7 @@ void Menu();
 int Open(FILE **file, char path[], char rights[]);
 void Close(FILE **file);
 int StrPadding(char str[], int space);
-char* VarField(toy a);
+char *VarField(toy a);
 void View();
 void Input(char flag[], void *a, char message[]);
 void GetString(char str[N], char message[]);
@@ -220,13 +223,12 @@ public:
                 _cur = _cur->next;
             else
                 _cur = _first;
+        else if (_cur && _cur->prev)
+            _cur = _cur->prev;
         else
-            if (_cur && _cur->prev)
-                _cur = _cur->prev;
-            else
-                _cur = _last;
+            _cur = _last;
 
-        return _cur->item; // TODO защитить, если в списке нету элементов
+        return _cur->item;
     }
 
     void changeDirection(void)
@@ -354,8 +356,7 @@ void Menu()
         while (!scanf("%d", &choice))
         {
             printf("Введены неверные данные!\nВведите пункт меню: ");
-            while (getchar() != '\n')
-                ;
+            STDINCLEAR;
         }
 
         switch (choice)
@@ -434,15 +435,14 @@ int StrPadding(char str[], int n)
     return n;
 }
 
-char* VarField(toy a)
+char *VarField(toy a)
 {
     if (a.variant == 0)
         return a.avaible.date;
+    else if (a.avaible.status)
+        return "Есть";
     else
-        if (a.avaible.status)
-            return "Есть";
-        else
-            return "Нет";
+        return "Нет";
 }
 
 void View()
@@ -476,13 +476,11 @@ void View()
             do
             {
                 printf("Ввод: ");
-                while (getchar() != '\n')
-                    ;
+                STDINCLEAR;
                 while (!scanf("%c", &choice))
                 {
                     printf("Ошибка ввода!\nВвод: ");
-                    while (getchar() != '\n')
-                        ;
+                    STDINCLEAR;
                 }
 
                 if (choice != 'j' && choice != 'q' && choice != 'l')
@@ -495,7 +493,7 @@ void View()
 
                 for (j = 0; j < TOY_PAGE + i + 1; j++)
                     list->getn();
-                
+
                 list->changeDirection();
             }
             else if (choice == 'q')
@@ -504,7 +502,9 @@ void View()
         else
         {
             puts("В списке отсутствуют записи");
+            STDINCLEAR;
             getchar();
+            break;
         }
     }
 }
@@ -516,8 +516,7 @@ void Input(char flag[], void *a, char message[])
     {
         puts("Неверные данные!");
         puts(message);
-        while (getchar() != '\n')
-            ;
+        STDINCLEAR;
     }
     getchar();
 }
@@ -560,8 +559,7 @@ void AddData()
         while (!scanf("%d", &choice))
         {
             printf("Введены неверные данные!\nВведите пункт меню: ");
-            while (getchar() != '\n')
-                ;
+            STDINCLEAR;
         }
 
         switch (choice)
@@ -608,15 +606,13 @@ void ToySearch()
         printf("Введите возраст и цену: ");
         while (scanf("%d%lf", &age, &price) != 2)
         {
-            while (getchar() != '\n')
-                ;
+            STDINCLEAR;
             printf("Ошибка ввода!\nВведите возраст и цену: ");
         }
         if (age < 0 || price < 0)
             printf("Введено отрицательное значение!\n");
     } while (age < 0 || price < 0);
-    while (getchar() != '\n')
-        ;
+    STDINCLEAR;
 
     puts(TABLE_TOP);
     for (int i = 0; i < list->count(); i++)
@@ -677,8 +673,7 @@ void MaxConstructor()
                 printf(TABLE_DATA, current.name, StrPadding(current.name, 41), " ", current.price, current.quantity, current.age_min, current.age_max, avaible, StrPadding(avaible, 9), " ");
                 puts(TABLE_BOTTOM);
 
-                while (getchar() != '\n')
-                    ;
+                STDINCLEAR;
                 printf("Для продолжение нажмите любую клавишу...");
                 getchar();
             }
@@ -694,8 +689,7 @@ void ToyDelete()
     char del[N], choice;
     struct toy current;
 
-    while (getchar() != '\n')
-        ;
+    STDINCLEAR;
     GetString(del, "Введите строку: ");
 
     for (int i = 0; i < list->count(); i++)
@@ -721,8 +715,7 @@ void ToyDelete()
                 printf("\nВы хотите удалить данный товар?\ny - да n - нет\n");
                 while (scanf("%c", &choice) != 1)
                 {
-                    while (getchar() != '\n')
-                        ;
+                    STDINCLEAR;
                     printf("Ошибка ввода!\nВы хотите удалить данный товар?\ny - да n - нет\n");
                 }
                 if (choice != 'y' && choice != 'n')
@@ -744,8 +737,7 @@ void ToyEdit()
     struct toy current;
     char edit[N], choice, avaible[9];
 
-    while (getchar() != '\n')
-        ;
+    STDINCLEAR;
     GetString(edit, "Введите строку: ");
 
     for (int i = 0; i < list->count(); i++)
@@ -771,8 +763,7 @@ void ToyEdit()
                 printf("\nВы хотите изменить данный товар?\ny - да n - нет\n");
                 while (scanf("%c", &choice) != 1)
                 {
-                    while (getchar() != '\n')
-                        ;
+                    STDINCLEAR;
                     printf("Ошибка ввода!\nВы хотите изменить данный товар?\ny - да n - нет ");
                 }
                 if (choice != 'y' && choice != 'n')
