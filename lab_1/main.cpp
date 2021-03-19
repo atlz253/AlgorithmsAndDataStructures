@@ -120,7 +120,7 @@ public:
             while (p->next && p->item.price < a.price)
                 p = p->next;
 
-            if (p->next || p->item.price > a.price) //TODO: проверить условие p->item.price > a.price (возможно излишне)
+            if (p->next)
             {
                 new_node->next = p;
                 new_node->prev = p->prev;
