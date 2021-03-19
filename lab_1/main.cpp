@@ -23,10 +23,26 @@
 
 using namespace std;
 
+typedef struct toy
+{
+    char name[N];
+    double price;
+    int quantity;
+    char age_min;
+    char age_max;
+    union
+    {
+        bool status;
+        char date[9];
+    } avaible;
+    char variant;
+} toy;
+
 void Menu();
 int Open(FILE **file, char path[], char rights[]);
 void Close(FILE **file);
 int StrPadding(char str[], int space);
+char* VarField(toy a);
 void View();
 void Input(char flag[], void *a, char message[]);
 void GetString(char str[N], char message[]);
@@ -36,21 +52,6 @@ void ToySearch();
 void MaxConstructor();
 void ToyDelete();
 void ToyEdit();
-
-typedef struct toy
-{
-    char name[N];
-    double price;
-    int quantity;
-    int age_min;
-    int age_max;
-    union
-    {
-        bool status;
-        char date[9];
-    } avaible;
-
-} toy;
 
 class List
 {
@@ -433,12 +434,23 @@ int StrPadding(char str[], int n)
     return n;
 }
 
+char* VarField(toy a)
+{
+    if (a.variant == 0)
+        return a.avaible.date;
+    else
+        if (a.avaible.status)
+            return "Есть";
+        else
+            return "Нет";
+}
+
 void View()
 {
     CLEAR;
     int i, j;
     toy current;
-    char choice, avaible[9];
+    char choice;
 
     while (true)
     {
@@ -453,14 +465,7 @@ void View()
 
                 current = list->getn();
 
-                if (current.avaible.date[2] == '.') // TODO переписать в функцию
-                    strcpy(avaible, current.avaible.date);
-                else if (current.avaible.status)
-                    strcpy(avaible, "Есть");
-                else
-                    strcpy(avaible, "Нет");
-
-                printf(TABLE_DATA, current.name, StrPadding(current.name, 41), " ", current.price, current.quantity, current.age_min, current.age_max, avaible, StrPadding(avaible, 9), " ");
+                printf(TABLE_DATA, current.name, StrPadding(current.name, 41), " ", current.price, current.quantity, current.age_min, current.age_max, VarField(current), StrPadding(VarField(current), 9), " ");
 
                 if (list->eol())
                     break;
@@ -563,12 +568,15 @@ void AddData()
         {
         case 1:
             newt.avaible.status = true;
+            newt.variant = 1;
             break;
         case 2:
             newt.avaible.status = false;
+            newt.variant = 1;
             break;
         case 3:
             Input("%s", &newt.avaible.date, "Введите дату поступления: ");
+            newt.variant = 0;
             break;
         }
     } while (choice < 1 || choice > 3);
