@@ -327,7 +327,7 @@ int main(int argc, char *argv[])
         }
     }
 
-    // delete list;
+    delete list;
     return 0;
 }
 
