@@ -344,11 +344,13 @@ void Menu()
         CLEAR;
         puts("1. Создание файла");
         puts("2. Добавление данных");
-        puts("3. Просмотр содержимого файла");
+        puts("3. Просмотр содержимого списка");
         puts("4. Поиск игрушки");
         puts("5. Сведения о самом дорогом конструкторе");
         puts("6. Удаление данных");
         puts("7. Редактирование данных");
+        puts("8. Просмотр списка");
+        puts("9. Просмотр списка в обратном направлении");
         puts("0. Завершить программу\n");
 
         printf("Введите пункт меню: ");
@@ -380,6 +382,18 @@ void Menu()
             break;
         case 7:
             ToyEdit();
+            break;
+        case 8:
+            CLEAR;
+            list->view();
+            STDINCLEAR;
+            getchar();
+            break;
+        case 9:
+            CLEAR;
+            list->view_reverse();
+            STDINCLEAR;
+            getchar();
             break;
         case 0:
             CLEAR;
