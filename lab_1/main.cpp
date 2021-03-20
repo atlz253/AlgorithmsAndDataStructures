@@ -206,7 +206,7 @@ public:
         return num;
     }
 
-    toy get(const unsigned int a)
+    toy get(const unsigned int a) // TODO: убрать
     {
         node *p = _first;
         for (int i = 0; i < a; i++)
@@ -246,6 +246,11 @@ public:
             return true;
         else
             return false;
+    }
+
+    void resetCur()
+    {
+        _cur = _last;
     }
 
     void set(const int a, const toy t)
@@ -462,14 +467,14 @@ void View()
     {
         CLEAR;
 
-        if (list->count())
+        if (list->count()) // есть ли в списке записи?
         {
             puts(TABLE_TOP);
-            for (i = 0; i < TOY_PAGE; i++)
+            for (i = 0; i < TOY_PAGE; i++) // печатаем TOY_PAGE элементов таблицы
             {
                 puts(TABLE_CONNECT);
 
-                current = list->getn();
+                current = list->getn(); // получаем следующий элемент списка
 
                 printf(
                     TABLE_DATA, current.name, StrPadding(current.name, 41), " ",
@@ -477,7 +482,7 @@ void View()
                     current.variant ? (current.avaible.status ? "Есть" : "Нет") : (current.avaible.date),
                     current.variant ? (current.avaible.status ? 5 : 6) : (1), " ");
 
-                if (list->eol())
+                if (list->eol()) // проверка на конец списка
                     break;
             }
             puts(TABLE_BOTTOM);
@@ -497,17 +502,28 @@ void View()
                     printf("Неизвестная команда!\n");
             } while (choice != 'j' && choice != 'q' && choice != 'l');
 
-            if (choice == 'j')
+            if (choice == 'j') // если вернулись обратно
             {
-                list->changeDirection();
+                list->changeDirection(); // меняем направление чтения списка
 
-                for (j = 0; j < TOY_PAGE + i + 1; j++)
+                for (j = 0; j < TOY_PAGE + i + 1; j++) // возвращаемся на страницу назад
+                {
                     list->getn();
+
+                    if (list->eol()) // проверка на конец списка
+                    {
+                        list->getn();
+                        break;
+                    }
+                }
 
                 list->changeDirection();
             }
             else if (choice == 'q')
-                break;
+            {
+                list->resetCur(); // ставим указатель в начальное положение
+                return;
+            }
         }
         else
         {
