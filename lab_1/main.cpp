@@ -206,15 +206,6 @@ public:
         return num;
     }
 
-    toy get(const unsigned int a) // TODO: убрать
-    {
-        node *p = _first;
-        for (int i = 0; i < a; i++)
-            p = p->next;
-
-        return p->item;
-    }
-
     toy getn(void)
     {
         if (_direction)
@@ -331,7 +322,7 @@ int main(int argc, char *argv[])
 
         for (int i = 0; i < list->count(); i++)
         {
-            current = list->get(i);
+            current = list->getn();
             fwrite(&current, sizeof(struct toy), 1, f);
         }
     }
@@ -643,7 +634,7 @@ void ToySearch()
     puts(TABLE_TOP);
     for (int i = 0; i < list->count(); i++)
     {
-        current = list->get(i);
+        current = list->getn();
         if (current.age_min <= age && current.age_max >= age && current.price <= price)
         {
             puts(TABLE_CONNECT);
@@ -657,6 +648,7 @@ void ToySearch()
     }
     puts(TABLE_BOTTOM);
 
+    list->resetCur();
     printf("Для продолжения нажмите любую клавишу...");
     getchar();
 }
@@ -670,19 +662,20 @@ void MaxConstructor()
 
     for (int i = 0; i < list->count(); i++)
     {
-        current = list->get(i);
+        current = list->getn();
         for (int j = 0; j < N; j++)
             if (current.name[j] == -48 && current.name[j + 1] == -102 && current.name[j + 20] == -47 && current.name[j + 21] == -128 && max_price < current.price)
                 max_price = current.price;
     }
+    list->resetCur();
 
     for (int i = 0; i < list->count(); i++)
     {
-        current = list->get(i);
+        current = list->getn();
         for (int j = 0; j < N; j++)
         {
-            if (current.name[j] == -48 && current.name[j + 1] == -102 && current.name[j + 20] == -47 && current.name[j + 21] == -128 && max_price == current.price)
-            { // Проверка 2 байт 'К' и 'р'
+            if (current.name[j] == -48 && current.name[j + 1] == -102 && current.name[j + 20] == -47 && current.name[j + 21] == -128 && max_price == current.price) // Проверка 2 байт 'К' и 'р'
+            { 
                 puts(TABLE_TOP);
                 puts(TABLE_CONNECT);
                 printf(
@@ -698,6 +691,7 @@ void MaxConstructor()
             }
         }
     }
+    list->resetCur();
 }
 
 void ToyDelete()
@@ -713,7 +707,7 @@ void ToyDelete()
 
     for (int i = 0; i < list->count(); i++)
     {
-        current = list->get(i);
+        current = list->getn();
         if (!strcmp(current.name, del))
         {
             puts(TABLE_TOP);
@@ -743,6 +737,7 @@ void ToyDelete()
             }
         }
     }
+    list->resetCur();
 }
 
 void ToyEdit()
@@ -757,7 +752,7 @@ void ToyEdit()
 
     for (int i = 0; i < list->count(); i++)
     {
-        current = list->get(i);
+        current = list->getn();
         if (!strcmp(current.name, edit))
         {
             puts(TABLE_TOP);
@@ -852,4 +847,5 @@ void ToyEdit()
 
         list->set(i, current);
     }
+    list->resetCur();
 }
