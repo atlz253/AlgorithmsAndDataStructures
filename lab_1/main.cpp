@@ -45,7 +45,6 @@ void Menu();
 int Open(FILE **file, char path[], char rights[]);
 void Close(FILE **file);
 int StrPadding(char str[], int space);
-char *VarField(toy a);
 void View();
 void Input(char flag[], void *a, char message[]);
 void GetString(char str[N], char message[]);
@@ -435,18 +434,11 @@ int StrPadding(char str[], int n)
     return n;
 }
 
-char *VarField(toy a)
-{
-    if (a.variant == 0)
-        return a.avaible.date; // FIXME возврат даты поступления
-    else if (a.avaible.status)
-        return "Есть";
-    else
-        return "Нет";
-}
-
 void View()
 {
+    /*
+        Просмотр всех записей в списке
+    */
     CLEAR;
     int i, j;
     toy current;
@@ -466,9 +458,10 @@ void View()
                 current = list->getn();
 
                 printf(
-                    TABLE_DATA, current.name, StrPadding(current.name, 41),
-                    " ", current.price, current.quantity, current.age_min,
-                    current.age_max, VarField(current), StrPadding(VarField(current), 9), " ");
+                    TABLE_DATA, current.name, StrPadding(current.name, 41), " ",
+                    current.price, current.quantity, current.age_min, current.age_max,
+                    current.variant ? (current.avaible.status ? "Есть" : "Нет") : (current.avaible.date),
+                    current.variant ? (current.avaible.status ? 5 : 6) : (1), " ");
 
                 if (list->eol())
                     break;
@@ -626,9 +619,10 @@ void ToySearch()
             puts(TABLE_CONNECT);
 
             printf(
-                    TABLE_DATA, current.name, StrPadding(current.name, 41),
-                    " ", current.price, current.quantity, current.age_min,
-                    current.age_max, VarField(current), StrPadding(VarField(current), 9), " ");
+                TABLE_DATA, current.name, StrPadding(current.name, 41), " ",
+                current.price, current.quantity, current.age_min, current.age_max,
+                current.variant ? (current.avaible.status ? "Есть" : "Нет") : (current.avaible.date),
+                current.variant ? (current.avaible.status ? 5 : 6) : (1), " ");
         }
     }
     puts(TABLE_BOTTOM);
@@ -662,9 +656,10 @@ void MaxConstructor()
                 puts(TABLE_TOP);
                 puts(TABLE_CONNECT);
                 printf(
-                    TABLE_DATA, current.name, StrPadding(current.name, 41),
-                    " ", current.price, current.quantity, current.age_min,
-                    current.age_max, VarField(current), StrPadding(VarField(current), 9), " ");
+                    TABLE_DATA, current.name, StrPadding(current.name, 41), " ",
+                    current.price, current.quantity, current.age_min, current.age_max,
+                    current.variant ? (current.avaible.status ? "Есть" : "Нет") : (current.avaible.date),
+                    current.variant ? (current.avaible.status ? 5 : 6) : (1), " ");
                 puts(TABLE_BOTTOM);
 
                 STDINCLEAR;
@@ -694,9 +689,10 @@ void ToyDelete()
             puts(TABLE_TOP);
             puts(TABLE_CONNECT);
             printf(
-                    TABLE_DATA, current.name, StrPadding(current.name, 41),
-                    " ", current.price, current.quantity, current.age_min,
-                    current.age_max, VarField(current), StrPadding(VarField(current), 9), " ");
+                TABLE_DATA, current.name, StrPadding(current.name, 41), " ",
+                current.price, current.quantity, current.age_min, current.age_max,
+                current.variant ? (current.avaible.status ? "Есть" : "Нет") : (current.avaible.date),
+                current.variant ? (current.avaible.status ? 5 : 6) : (1), " ");
             puts(TABLE_BOTTOM);
 
             do
@@ -737,9 +733,10 @@ void ToyEdit()
             puts(TABLE_TOP);
             puts(TABLE_CONNECT);
             printf(
-                    TABLE_DATA, current.name, StrPadding(current.name, 41),
-                    " ", current.price, current.quantity, current.age_min,
-                    current.age_max, VarField(current), StrPadding(VarField(current), 9), " ");
+                TABLE_DATA, current.name, StrPadding(current.name, 41), " ",
+                current.price, current.quantity, current.age_min, current.age_max,
+                current.variant ? (current.avaible.status ? "Есть" : "Нет") : (current.avaible.date),
+                current.variant ? (current.avaible.status ? 5 : 6) : (1), " ");
             puts(TABLE_BOTTOM);
 
             do
@@ -762,7 +759,7 @@ void ToyEdit()
                     puts("2. Изменить цену");
                     puts("3. Изменить количество");
                     puts("4. Изменить минимальный возраст");
-                    puts("5. Изменить максимальный возраст"); //TODO: редактирование вариативного поля
+                    puts("5. Изменить максимальный возраст");
                     puts("6. Изменить наличие в магазине");
                     puts("0. Завершить редактирование");
                     Input("%d", &int_choice, "Введите пункт: ");
