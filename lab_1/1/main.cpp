@@ -277,9 +277,8 @@ public:
     {
         while (_first)
         {
-            _cur = _first->next;
-            cout << _first->item.name << endl;
-            delete _first;
+            _cur = _first->next; // сохраняем ссылку на следующий элемент
+            delete _first; // удаляем текущий
             _first = _cur;
         }
         _last = nullptr;
