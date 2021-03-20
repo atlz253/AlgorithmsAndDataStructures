@@ -275,11 +275,10 @@ public:
 
     ~List()
     {
-        int i, n = count();
-        for (i = 0; i < n; i++)
+        while (_first)
         {
             _cur = _first->next;
-            cout << "Удален " << _first->item.name << endl;
+            cout << _first->item.name << endl;
             delete _first;
             _first = _cur;
         }
