@@ -675,7 +675,7 @@ void MaxConstructor()
         for (int j = 0; j < N; j++)
         {
             if (current.name[j] == -48 && current.name[j + 1] == -102 && current.name[j + 20] == -47 && current.name[j + 21] == -128 && max_price == current.price) // Проверка 2 байт 'К' и 'р'
-            { 
+            {
                 puts(TABLE_TOP);
                 puts(TABLE_CONNECT);
                 printf(
