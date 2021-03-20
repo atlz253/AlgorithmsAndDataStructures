@@ -5,7 +5,7 @@
 #define TABLE_CONNECT "╠══════════════════════════════════════════╬════════╬════════╬════════════╬════════════╬══════════╣"
 #define TABLE_DATA "║ %s%*s║ %-7g║ %-7d║ %-11d║ %-11d║ %s%*s║\n"
 #define TABLE_BOTTOM "╚══════════════════════════════════════════╩════════╩════════╩════════════╩════════════╩══════════╝"
-#define CLEAR_CONSOLE 1
+#define CLEAR_CONSOLE 0
 #define STDINCLEAR            \
     while (getchar() != '\n') \
         ;
@@ -271,6 +271,19 @@ public:
             stream << "список пуст!" << endl;
         }
         return stream;
+    }
+
+    ~List()
+    {
+        int i, n = count();
+        for (i = 0; i < n; i++)
+        {
+            _cur = _first->next;
+            cout << "Удален " << _first->item.name << endl;
+            delete _first;
+            _first = _cur;
+        }
+        _last = nullptr;
     }
 };
 
