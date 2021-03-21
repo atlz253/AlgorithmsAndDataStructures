@@ -129,7 +129,7 @@ public:
                 delete _last;
             }
         }
-    }    
+    }
 
     unsigned int readStart(void) override
     {
@@ -159,6 +159,36 @@ public:
 
     virtual void sort(void) override
     {
+        if (_first)
+        {
+            int tmp;
+            node
+                *f = _first,
+                *s = nullptr,
+                *min = nullptr;
+
+            while (f)
+            {
+                s = f->next;
+                min = f;
+                while (s)
+                {
+                    if (s->num < min->num)
+                        min = s;
+
+                    s = s->next;
+                }
+
+                if (min != f)
+                {
+                    tmp = f->num;
+                    f->num = min->num;
+                    min->num = tmp;
+                }
+
+                f = f->next;
+            }
+        }
     }
 
     virtual void simple(void) override
@@ -238,6 +268,7 @@ public:
                  << "6. Прочитать число в конце дека" << endl
                  << "7. Проверка заполнения дека" << endl
                  << "8. Проверка пустоты дека" << endl
+                 << "9. Сортировка дека в порядке неубывания" << endl
                  << "0. Выход" << endl;
             _input("Ввод: ", choice);
 
@@ -270,7 +301,7 @@ public:
                     cout << "Прочитанное число: " << _deque->readStart() << endl;
                 else
                     cout << "Дек пустой" << endl;
-                
+
                 cin.get();
                 break;
             case 6:
@@ -290,9 +321,16 @@ public:
                 break;
             case 8:
                 if (_deque->isEmpty())
-                    cout << "Дек пустой" << endl; 
+                    cout << "Дек пустой" << endl;
                 else
                     cout << "Дек заполнен" << endl;
+                cin.get();
+                break;
+            case 9:
+                _deque->sort();
+                break;
+            default:
+                cout << "Неверный пункт меню!" << endl;
                 cin.get();
                 break;
             }
