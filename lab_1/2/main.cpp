@@ -97,25 +97,39 @@ public:
 
     void delStart(void) override
     {
-        if (_last)
+        if (_first)
         {
-            node *p = _last->prev;
-            p->next = nullptr;
-            delete _last;
-            _last = p;
+            if (_first->next)
+            {
+                node *p = _first->next;
+                p->prev = nullptr;
+                delete _first;
+                _first = p;
+            }
+            else
+            {
+                delete _first;
+            }
         }
     }
 
     void delEnd(void) override
     {
-        if (_first)
+        if (_last)
         {
-            node *p = _first->next;
-            p->prev = nullptr;
-            delete _first;
-            _first = p;
+            if (_last->prev)
+            {
+                node *p = _last->prev;
+                p->next = nullptr;
+                delete _last;
+                _last = p;
+            }
+            else
+            {
+                delete _last;
+            }
         }
-    }
+    }    
 
     unsigned int readStart(void) override
     {
