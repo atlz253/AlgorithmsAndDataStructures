@@ -256,9 +256,8 @@ public:
     {
         if (_isNatural(a))
         {
-            int *tmp;
+            int *tmp = (int *)malloc((_size + 1) * sizeof(int)); // создаем новый массив
 
-            tmp = (int *)malloc((_size + 1) * sizeof(int)); // создаем новый массив
             if (tmp)
             {
                 int *p = tmp;
@@ -291,10 +290,8 @@ public:
     {
         if (_isNatural(a))
         {
-            int *tmp;
-
+            int *tmp = (int *)realloc(_first, _size * sizeof(int)); // выделение памяти для нового элемента
             _size++;
-            tmp = (int *)realloc(_first, _size * sizeof(int)); // выделение памяти для нового элемента
 
             if (tmp)
             {
