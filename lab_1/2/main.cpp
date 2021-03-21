@@ -416,6 +416,36 @@ public:
 
     void sort(void) override
     {
+        if (_first)
+        {
+            int
+                *f = _first,
+                *s = nullptr,
+                *min = nullptr;
+            
+            while (f != _last + 1)
+            {
+                min = f;
+                s = f + 1;
+
+                while (s != _last + 1)
+                {
+                    if (*s < *min)
+                        min = s;
+                    s = s + 1;
+                }
+
+                if (min != f)
+                {
+                    int tmp;
+                    tmp = *f;
+                    *f = *min;
+                    *min = tmp;
+                }
+
+                f = f + 1;
+            }
+        }
     }
 
     void simple(void) override
