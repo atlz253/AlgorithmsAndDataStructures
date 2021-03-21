@@ -266,11 +266,19 @@ public:
                 _deque->delEnd();
                 break;
             case 5:
-                cout << "Прочитанное число: " << _deque->readStart() << endl;
+                if (_deque->isFilled())
+                    cout << "Прочитанное число: " << _deque->readStart() << endl;
+                else
+                    cout << "Дек пустой" << endl;
+                
                 cin.get();
                 break;
             case 6:
-                cout << "Прочитанное число: " << _deque->readEnd() << endl;
+                if (_deque->isFilled())
+                    cout << "Прочитанное число: " << _deque->readEnd() << endl;
+                else
+                    cout << "Дек пустой" << endl;
+
                 cin.get();
                 break;
             case 7:
