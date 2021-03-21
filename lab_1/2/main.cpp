@@ -109,6 +109,7 @@ public:
             else
             {
                 delete _first;
+                _first = nullptr;
             }
         }
     }
@@ -127,6 +128,7 @@ public:
             else
             {
                 delete _last;
+                _last = nullptr;
             }
         }
     }
@@ -328,6 +330,8 @@ public:
                 break;
             case 9:
                 _deque->sort();
+                break;
+            case 0:
                 break;
             default:
                 cout << "Неверный пункт меню!" << endl;
