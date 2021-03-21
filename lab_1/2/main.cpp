@@ -1,6 +1,9 @@
 #include <iostream>
 
-#define CLEAR system("clear");
+#define CLEAR_CONSOLE 1
+#define CLEAR          \
+    if (CLEAR_CONSOLE) \
+        system("clear");
 
 using namespace std;
 
@@ -34,7 +37,7 @@ class ListDeque : public Deque
 private:
     typedef struct node
     {
-        unsigned int num;
+        int num;
         node *next = nullptr;
         node *prev = nullptr;
     } node;
@@ -195,6 +198,39 @@ public:
 
     virtual void simple(void) override
     {
+        if (_first)
+        {
+            int i;
+            node
+                *f = _first,
+                *s = nullptr;
+
+            while (f)
+            {
+                s = f->next;
+                for (i = 2; i < f->num; i++)
+                {
+                    cout << f->num << ' ' << i << ' ' << f->num % i << endl;
+                    if (f->num % i == 0)
+                    {
+                        cout << "Удаление " << f->num << endl;
+                        if (f->prev)
+                            f->prev->next = s;
+                        else
+                            _first = s;
+
+                        if (s)
+                            s->prev = f->prev;
+                        else
+                            _last = f;
+
+                        delete f;
+                        break;
+                    }
+                }
+                f = s;
+            }
+        }
     }
 
     ~ListDeque()
@@ -271,6 +307,7 @@ public:
                  << "7. Проверка заполнения дека" << endl
                  << "8. Проверка пустоты дека" << endl
                  << "9. Сортировка дека в порядке неубывания" << endl
+                 << "10. Удалить из дека элементы, оставив только простые числа" << endl
                  << "0. Выход" << endl;
             _input("Ввод: ", choice);
 
@@ -330,6 +367,9 @@ public:
                 break;
             case 9:
                 _deque->sort();
+                break;
+            case 10:
+                _deque->simple();
                 break;
             case 0:
                 break;
