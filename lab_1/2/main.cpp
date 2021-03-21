@@ -342,12 +342,18 @@ public:
 
     bool isEmpty(void) override
     {
-        return false;
+        if (_first)
+            return false;
+        else
+            return true;
     }
 
     bool isFilled(void) override
     {
-        return true;
+        if (_first)
+            return true;
+        else
+            return false;
     }
 
     void sort(void) override
