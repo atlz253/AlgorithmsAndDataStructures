@@ -23,8 +23,8 @@ public:
     virtual bool addEnd(const int a) = 0;
     virtual void delStart(void) = 0;
     virtual void delEnd(void) = 0;
-    virtual unsigned int readStart(void) = 0;
-    virtual unsigned int readEnd(void) = 0;
+    virtual int readStart(void) = 0;
+    virtual int readEnd(void) = 0;
     virtual bool isEmpty(void) = 0;
     virtual bool isFilled(void) = 0;
     virtual void sort(void) = 0;
@@ -136,12 +136,12 @@ public:
         }
     }
 
-    unsigned int readStart(void) override
+    int readStart(void) override
     {
         return _first->num;
     }
 
-    unsigned int readEnd(void) override
+    int readEnd(void) override
     {
         return _last->num;
     }
@@ -244,6 +244,126 @@ public:
     }
 };
 
+class VectorDeque : public Deque
+{
+private:
+    int *_first = nullptr;
+    int *_last = nullptr;
+    int _size = 0;
+
+public:
+    bool addStart(const int a) override
+    {
+        if (_isNatural(a))
+        {
+            int *tmp;
+
+            tmp = (int *)malloc((_size + 1) * sizeof(int)); // создаем новый массив
+            if (tmp)
+            {
+                int *p = tmp;
+
+                *tmp = a;                       // присваиваем новый элемент в начало массива
+                for (int i = 0; i < _size; i++) // копируем данные из старого массива
+                {
+                    *(p + i + 1) = *(_first + i);
+                }
+                free(_first); // удаляем старый массив
+                _first = tmp;
+                _last = _first + _size;
+                _size++;
+                return true;
+            }
+            else
+            {
+                cout << "Ошибка выделения памяти!" << endl;
+                cin.get();
+                return false;
+            }
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    bool addEnd(const int a) override
+    {
+        if (_isNatural(a))
+        {
+            int *tmp;
+
+            _size++;
+            tmp = (int *)realloc(_first, _size * sizeof(int)); // выделение памяти для нового элемента
+
+            if (tmp)
+            {
+                _first = tmp;
+
+                if (_last) // если добавили первый элемент в дек
+                    _last = _last + 1;
+                else
+                    _last = _first;
+
+                *_last = a;
+                return true;
+            }
+            else
+            {
+                _size--;
+                cout << "Ошибка выделения памяти!" << endl;
+                cin.get();
+                return false;
+            }
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    void delStart(void) override
+    {
+    }
+
+    void delEnd(void) override
+    {
+    }
+
+    int readStart(void) override
+    {
+        return *_first;
+    }
+
+    int readEnd(void) override
+    {
+        return *_last;
+    }
+
+    bool isEmpty(void) override
+    {
+        return false;
+    }
+
+    bool isFilled(void) override
+    {
+        return true;
+    }
+
+    void sort(void) override
+    {
+    }
+
+    void simple(void) override
+    {
+    }
+
+    ~VectorDeque()
+    {
+        free(_first);
+    }
+};
+
 class Menu
 {
 private:
@@ -289,6 +409,7 @@ public:
                 _deque = new ListDeque();
                 break;
             case 2:
+                _deque = new VectorDeque();
                 break;
             default:
                 cout << "Ошибка ввода!" << endl;
