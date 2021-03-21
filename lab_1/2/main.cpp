@@ -321,11 +321,48 @@ public:
 
     void delStart(void) override
     {
+        if (_first)
+            _size--;
+        else
+            return;
+
+        if (_size)
+        {
+            int *tmp = (int *)malloc(_size * sizeof(int));
+
+            if (tmp)
+            {
+                int *p = tmp;
+
+                for (int i = 0; i < _size; i++)
+                {
+                    *(p + i) = *(_first + i + 1);
+                }
+                free(_first);
+                _first = tmp;
+                _last = _first + _size;
+            }
+            else
+            {
+                _size++;
+                cout << "Ошибка выделения памяти!" << endl;
+                cin.get();
+            }
+        }
+        else
+        {
+            free(_first);
+            _first = nullptr;
+            _last = nullptr;
+        }
     }
 
     void delEnd(void) override
     {
-        _size--;
+        if (_first)
+            _size--;
+        else
+            return;
 
         if (_size)
         {
