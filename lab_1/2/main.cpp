@@ -325,6 +325,30 @@ public:
 
     void delEnd(void) override
     {
+        _size--;
+
+        if (_size)
+        {
+            int *tmp = (int *)realloc(_first, _size * sizeof(int));
+
+            if (tmp)
+            {
+                _first = tmp;
+                _last = _last - 1;
+            }
+            else
+            {
+                _size++;
+                cout << "Ошибка выделения памяти!" << endl;
+                cin.get();
+            }
+        }
+        else
+        {
+            free(_first);
+            _first = nullptr;
+            _last = nullptr;
+        }
     }
 
     int readStart(void) override
