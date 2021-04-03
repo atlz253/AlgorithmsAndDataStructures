@@ -27,8 +27,6 @@ public:
     virtual int readEnd(void) = 0;
     virtual bool isEmpty(void) = 0;
     virtual bool isFilled(void) = 0;
-    virtual void sort(void) = 0;
-    virtual void simple(void) = 0;
     virtual ~Deque() = default;
 };
 
@@ -113,6 +111,7 @@ public:
             {
                 delete _first;
                 _first = nullptr;
+                _last = nullptr;
             }
         }
     }
@@ -132,6 +131,7 @@ public:
             {
                 delete _last;
                 _last = nullptr;
+                _first = nullptr;
             }
         }
     }
@@ -160,77 +160,6 @@ public:
             return true;
         else
             return false;
-    }
-
-    virtual void sort(void) override
-    {
-        if (_first)
-        {
-            int tmp;
-            node
-                *f = _first,
-                *s = nullptr,
-                *min = nullptr;
-
-            while (f)
-            {
-                s = f->next;
-                min = f;
-                while (s)
-                {
-                    if (s->num < min->num)
-                        min = s;
-
-                    s = s->next;
-                }
-
-                if (min != f)
-                {
-                    tmp = f->num;
-                    f->num = min->num;
-                    min->num = tmp;
-                }
-
-                f = f->next;
-            }
-        }
-    }
-
-    virtual void simple(void) override
-    {
-        if (_first)
-        {
-            int i;
-            node
-                *f = _first,
-                *s = nullptr;
-
-            while (f)
-            {
-                s = f->next;
-                for (i = 2; i < f->num; i++)
-                {
-                    cout << f->num << ' ' << i << ' ' << f->num % i << endl;
-                    if (f->num % i == 0)
-                    {
-                        cout << "Удаление " << f->num << endl;
-                        if (f->prev)
-                            f->prev->next = s;
-                        else
-                            _first = s;
-
-                        if (s)
-                            s->prev = f->prev;
-                        else
-                            _last = f;
-
-                        delete f;
-                        break;
-                    }
-                }
-                f = s;
-            }
-        }
     }
 
     ~ListDeque()
@@ -269,8 +198,13 @@ public:
                 }
                 free(_first); // удаляем старый массив
                 _first = tmp;
-                _last = _first + _size;
+
                 _size++;
+                if (_size)
+                    _last = _first + (_size - 1);
+                else
+                    _last = _first;
+
                 return true;
             }
             else
@@ -340,7 +274,11 @@ public:
                 }
                 free(_first);
                 _first = tmp;
-                _last = _first + _size;
+
+                if (_size)
+                    _last = _first + (_size - 1);
+                else
+                    _last = _first;
             }
             else
             {
@@ -414,49 +352,65 @@ public:
             return false;
     }
 
-    void sort(void) override
-    {
-        if (_first)
-        {
-            int
-                *f = _first,
-                *s = nullptr,
-                *min = nullptr;
-            
-            while (f != _last + 1)
-            {
-                min = f;
-                s = f + 1;
-
-                while (s != _last + 1)
-                {
-                    if (*s < *min)
-                        min = s;
-                    s = s + 1;
-                }
-
-                if (min != f)
-                {
-                    int tmp;
-                    tmp = *f;
-                    *f = *min;
-                    *min = tmp;
-                }
-
-                f = f + 1;
-            }
-        }
-    }
-
-    void simple(void) override
-    {
-    }
-
     ~VectorDeque()
     {
         free(_first);
     }
 };
+
+void simple(Deque *deque)
+{
+    int i;
+    ListDeque *tmp = new ListDeque();
+
+m1:
+    while (deque->isFilled())
+    {
+        int num = deque->readStart();
+        deque->delStart();
+        for (i = 2; i < num; i++)
+            if (num % i == 0)
+                goto m1;
+        tmp->addEnd(num);
+    }
+
+    while (tmp->isFilled())
+    {
+        deque->addEnd(tmp->readStart());
+        tmp->delStart();
+    }
+
+    delete tmp;
+}
+
+void sort(Deque *deque)
+{
+    int i;
+    ListDeque *tmp = new ListDeque();
+
+    while (deque->isFilled())
+    {
+        if (tmp->isFilled() && tmp->readStart() < deque->readStart())
+        {
+            while (tmp->readStart() < deque->readStart())
+            {
+                deque->addEnd(tmp->readStart());
+                tmp->delStart();
+            } 
+        }
+
+        tmp->addStart(deque->readStart());    
+        deque->delStart();
+    }
+    
+    while (tmp->isFilled())
+    {
+        deque->addEnd(tmp->readStart());
+        tmp->delStart();
+    }
+
+    delete tmp;
+}
 
 class Menu
 {
@@ -581,10 +535,10 @@ public:
                 cin.get();
                 break;
             case 9:
-                _deque->sort();
+                sort(_deque);
                 break;
             case 10:
-                _deque->simple();
+                simple(_deque);
                 break;
             case 0:
                 break;
