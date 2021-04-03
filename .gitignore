@@ -75,3 +75,5 @@ dkms.conf
 
 main
 *.pdf
+build-*
+*.zip
