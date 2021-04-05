@@ -178,9 +178,16 @@ class VectorDeque : public Deque
 private:
     int *_first = nullptr;
     int *_last = nullptr;
+    int *arr;
     int _size = 0;
 
 public:
+    VectorDeque(const int size)
+    {
+        _size = size;
+        arr = new int[size];
+    }
+
     bool addStart(const int a) override
     {
         if (_isNatural(a))
@@ -358,20 +365,23 @@ public:
     }
 };
 
+bool isSimple(const int num)
+{
+    for (int i = 2; i < num; i++)
+        if (num % i == 0)
+            return false;
+    return true;
+}
+
 void simple(Deque *deque)
 {
-    int i;
     ListDeque *tmp = new ListDeque();
 
-m1:
     while (deque->isFilled())
     {
-        int num = deque->readStart();
+        if (isSimple(deque->readStart()))
+            tmp->addEnd(deque->readStart());
         deque->delStart();
-        for (i = 2; i < num; i++)
-            if (num % i == 0)
-                goto m1;
-        tmp->addEnd(num);
     }
 
     while (tmp->isFilled())
@@ -385,24 +395,35 @@ m1:
 
 void sort(Deque *deque)
 {
-    int i;
     ListDeque *tmp = new ListDeque();
 
     while (deque->isFilled())
     {
-        if (tmp->isFilled() && tmp->readStart() < deque->readStart())
+        if (tmp->isEmpty() || tmp->readStart() > deque->readStart())
         {
-            while (tmp->readStart() < deque->readStart())
-            {
-                deque->addEnd(tmp->readStart());
-                tmp->delStart();
-            } 
+            tmp->addStart(deque->readStart());
+            deque->delStart();
         }
+        else if (tmp->readEnd() < deque->readStart())
+        {
+            tmp->addEnd(deque->readStart());
+            deque->delStart();
+        }
+        else
+        {
+            int n = deque->readStart();
+            deque->delStart();
 
-        tmp->addStart(deque->readStart());    
-        deque->delStart();
+            while (tmp->readStart() < n)
+            {
+                deque->addStart(tmp->readStart());
+                tmp->delStart();
+            }
+
+            tmp->addStart(n);
+        }
     }
-    
+
     while (tmp->isFilled())
     {
         deque->addEnd(tmp->readStart());
@@ -457,7 +478,7 @@ public:
                 _deque = new ListDeque();
                 break;
             case 2:
-                _deque = new VectorDeque();
+                _deque = new VectorDeque(1);
                 break;
             default:
                 cout << "Ошибка ввода!" << endl;
@@ -477,6 +498,7 @@ public:
                  << "8. Проверка пустоты дека" << endl
                  << "9. Сортировка дека в порядке неубывания" << endl
                  << "10. Удалить из дека элементы, оставив только простые числа" << endl
+                 << "11. Добавить в дек тестовые значения (5 -> 3 -> 4 -> 1 -> 2)" << endl
                  << "0. Выход" << endl;
             _input("Ввод: ", choice);
 
@@ -540,6 +562,12 @@ public:
             case 10:
                 simple(_deque);
                 break;
+            case 11:
+                _deque->addEnd(5);
+                _deque->addEnd(3);
+                _deque->addEnd(4);
+                _deque->addEnd(1);
+                _deque->addEnd(2);
             case 0:
                 break;
             default:
