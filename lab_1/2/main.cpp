@@ -178,48 +178,36 @@ class VectorDeque : public Deque
 private:
     int *_first = nullptr;
     int *_last = nullptr;
-    int *arr;
     int _size = 0;
 
 public:
     VectorDeque(const int size)
     {
         _size = size;
-        arr = new int[size];
+        _first = new int[size];
     }
 
     bool addStart(const int a) override
     {
-        if (_isNatural(a))
+        if (_isNatural(a) && _last != _first + _size - 1)
         {
-            int *tmp = (int *)malloc((_size + 1) * sizeof(int)); // создаем новый массив
-
-            if (tmp)
+            if (_last)
             {
-                int *p = tmp;
-
-                *tmp = a;                       // присваиваем новый элемент в начало массива
-                for (int i = 0; i < _size; i++) // копируем данные из старого массива
+                _last++;
+                int *p = _last;
+                while (p != _first)
                 {
-                    *(p + i + 1) = *(_first + i);
+                    p--;
+                    *(p + 1) = *p;
                 }
-                free(_first); // удаляем старый массив
-                _first = tmp;
-
-                _size++;
-                if (_size)
-                    _last = _first + (_size - 1);
-                else
-                    _last = _first;
-
-                return true;
+                *_first = a;
             }
             else
             {
-                cout << "Ошибка выделения памяти!" << endl;
-                cin.get();
-                return false;
+                *_first = a;
+                _last = _first;
             }
+            return true;
         }
         else
         {
@@ -229,30 +217,19 @@ public:
 
     bool addEnd(const int a) override
     {
-        if (_isNatural(a))
+        if (_isNatural(a) && _last != _first + _size - 1)
         {
-            int *tmp = (int *)realloc(_first, _size * sizeof(int)); // выделение памяти для нового элемента
-            _size++;
-
-            if (tmp)
+            if (_last)
             {
-                _first = tmp;
-
-                if (_last) // если добавили первый элемент в дек
-                    _last = _last + 1;
-                else
-                    _last = _first;
-
+                _last++;
                 *_last = a;
-                return true;
             }
             else
             {
-                _size--;
-                cout << "Ошибка выделения памяти!" << endl;
-                cin.get();
-                return false;
+                *_first = a;
+                _last = _first;
             }
+            return true;
         }
         else
         {
@@ -438,10 +415,11 @@ class Menu
 private:
     Deque *_deque = nullptr;
 
-    void _input(const string &message, int &num)
+    int _input(const string &message)
     {
         while (true)
         {
+            int num;
             char c;
             cout << message;
             cin >> num;
@@ -455,7 +433,7 @@ private:
             }
             else
             {
-                break;
+                return num;
             }
         }
     }
@@ -463,14 +441,14 @@ private:
 public:
     void init(void)
     {
-        int choice, a;
+        int choice, tmp;
 
         do
         {
             CLEAR;
             cout << "1. Дек с помощью связной структуры данных" << endl
                  << "2. Дек с помощью векторной структуры данных" << endl;
-            _input("Ввод: ", choice);
+            choice = _input("Ввод: ");
 
             switch (choice)
             {
@@ -478,7 +456,14 @@ public:
                 _deque = new ListDeque();
                 break;
             case 2:
-                _deque = new VectorDeque(1);
+                tmp = _input("Введите размер очереди: ");
+                while (tmp <= 0)
+                {
+                    cout << "Ошибка ввода!" << endl;
+                    cin.get();
+                    tmp = _input("Введите размер очереди: ");
+                }
+                _deque = new VectorDeque(tmp);
                 break;
             default:
                 cout << "Ошибка ввода!" << endl;
@@ -500,23 +485,23 @@ public:
                  << "10. Удалить из дека элементы, оставив только простые числа" << endl
                  << "11. Добавить в дек тестовые значения (5 -> 3 -> 4 -> 1 -> 2)" << endl
                  << "0. Выход" << endl;
-            _input("Ввод: ", choice);
+            choice = _input("Ввод: ");
 
             switch (choice)
             {
             case 1:
-                _input("Введите натуральное число: ", a);
-                if (!_deque->addStart(a))
+                tmp = _input("Введите натуральное число: ");
+                if (!_deque->addStart(tmp))
                 {
-                    cout << "Число не является натуральным!" << endl;
+                    cout << "Очередь переполненна или число не является натуральным!" << endl;
                     cin.get();
                 }
                 break;
             case 2:
-                _input("Введите натуральное число: ", a);
-                if (!_deque->addEnd(a))
+                tmp = _input("Введите натуральное число: ");
+                if (!_deque->addEnd(tmp))
                 {
-                    cout << "Число не является натуральным!" << endl;
+                    cout << "Очередь переполненна или число не является натуральным!" << endl;
                     cin.get();
                 }
                 break;
