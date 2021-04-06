@@ -5,7 +5,7 @@
 #define TABLE_CONNECT "╠══════════════════════════════════════════╬════════╬════════╬════════════╬════════════╬══════════╣"
 #define TABLE_DATA "║ %s%*s║ %-7g║ %-7d║ %-11d║ %-11d║ %s%*s║\n"
 #define TABLE_BOTTOM "╚══════════════════════════════════════════╩════════╩════════╩════════════╩════════════╩══════════╝"
-#define CLEAR_CONSOLE 0
+#define CLEAR_CONSOLE 1
 #define STDINCLEAR            \
     while (getchar() != '\n') \
         ;
@@ -21,8 +21,8 @@
     system("clear")
 #endif
 
-#define N 81
-#define TOY_PAGE 10
+#define N 81 // кол-во символов в строке
+#define TOY_PAGE 10 // кол-во строк в таблице
 
 using namespace std;
 
@@ -226,11 +226,6 @@ public:
         _direction = !_direction;
     }
 
-    bool getDirection(void)
-    {
-        return _direction;
-    }
-
     bool eol(void)
     {
         if (_direction && _cur == _last || !_direction && _cur == _first)
@@ -336,6 +331,8 @@ int main(int argc, char *argv[])
             current = list->getn();
             fwrite(&current, sizeof(struct toy), 1, f);
         }
+
+        Close(&f);
     }
 
     delete list;
