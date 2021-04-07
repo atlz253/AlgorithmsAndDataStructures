@@ -239,90 +239,51 @@ public:
 
     void delStart(void) override
     {
-        if (_first)
-            _size--;
-        else
-            return;
-
-        if (_size)
+        if (_last && _first != _last)
         {
-            int *tmp = (int *)malloc(_size * sizeof(int));
-
-            if (tmp)
+            int *p = _first + 1;
+            
+            *(p - 1) = *p;
+            while (p != _last)
             {
-                int *p = tmp;
-
-                for (int i = 0; i < _size; i++)
-                {
-                    *(p + i) = *(_first + i + 1);
-                }
-                free(_first);
-                _first = tmp;
-
-                if (_size)
-                    _last = _first + (_size - 1);
-                else
-                    _last = _first;
+                p++;
+                *(p - 1) = *p;
             }
-            else
-            {
-                _size++;
-                cout << "Ошибка выделения памяти!" << endl;
-                cin.get();
-            }
+
+            _last--;
         }
         else
         {
-            free(_first);
-            _first = nullptr;
             _last = nullptr;
         }
     }
 
     void delEnd(void) override
     {
-        if (_first)
-            _size--;
+        if (_last && _first != _last)
+            _last--;
         else
-            return;
-
-        if (_size)
-        {
-            int *tmp = (int *)realloc(_first, _size * sizeof(int));
-
-            if (tmp)
-            {
-                _first = tmp;
-                _last = _last - 1;
-            }
-            else
-            {
-                _size++;
-                cout << "Ошибка выделения памяти!" << endl;
-                cin.get();
-            }
-        }
-        else
-        {
-            free(_first);
-            _first = nullptr;
             _last = nullptr;
-        }
     }
 
     int readStart(void) override
     {
-        return *_first;
+        if (_last)
+            return *_first;
+        else
+            return -1;
     }
 
     int readEnd(void) override
     {
-        return *_last;
+        if (_last)
+            return *_last;
+        return -1;
     }
 
     bool isEmpty(void) override
     {
-        if (_first)
+        if (_last)
             return false;
         else
             return true;
@@ -330,7 +291,7 @@ public:
 
     bool isFilled(void) override
     {
-        if (_first)
+        if (_last)
             return true;
         else
             return false;
