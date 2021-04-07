@@ -299,7 +299,7 @@ public:
 
     ~VectorDeque()
     {
-        free(_first);
+        delete _first;
     }
 };
 
