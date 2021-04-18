@@ -123,7 +123,7 @@ public:
         cout << "Недостижимые вершины: ";
         for (i = 0; i < _vertex; i++)
             if (*(mark + i) == 0)
-                cout << '(' << i + 1 << ") ";
+                cout << '(' << (int)i << ") ";
         cout << endl;
 
         delete mark;
@@ -262,6 +262,42 @@ public:
             return true;
         }
     }
+
+    void unattainable(const char vertex)
+    {
+        char i, j, *mark = new char[_vertex];
+        for (i = 0; i < _vertex; i++)
+            if (i == vertex)
+                *(mark + i) = 1;
+            else
+                *(mark + i) = 0;
+
+        for (i = 0; i < _vertex; i++)
+        {
+            if (*(mark + i) == 1)
+            {
+                node *p = (*(_list + i))->next;
+
+                while (p)
+                {
+                    if (*(mark + p->vertex) == 0)
+                        *(mark + p->vertex) = 1;
+                    p = p->next;
+                }
+
+                *(mark + i) = 2;
+                i = 0;
+            }
+        }
+
+        cout << "Недостижимые вершины: ";
+        for (i = 0; i < _vertex; i++)
+            if (*(mark + i) == 0)
+                cout << '(' << (int)i << ") ";
+        cout << endl;
+
+        delete mark;
+    }
 };
 
 class Menu
@@ -374,7 +410,11 @@ public:
             }
             else if (choice == 5)
             {
-                _matrix->unattainable(_input("Введите номер вершины: "));
+                char vertex = _input("Введите номер вершины: ");
+                cout << "матрица смежностей: ";
+                _matrix->unattainable(vertex);
+                cout << "список смежностей: ";
+                _list->unattainable(vertex);
                 cin.get();
             }
             else if (choice == 6)
