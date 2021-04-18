@@ -64,7 +64,7 @@ public:
         }
         else
         {
-            char *p = *(_matrix + in - 1) + out - 1;
+            char *p = *(_matrix + out) + in;
 
             if (*p)
                 *p = 0;
@@ -95,7 +95,7 @@ public:
     {
         char i, j, *mark = new char[_vertex];
         for (i = 0; i < _vertex; i++)
-            if (i == vertex - 1)
+            if (i == vertex)
                 *(mark + i) = 1;
             else
                 *(mark + i) = 0;
@@ -160,6 +160,18 @@ private:
     char _vertex = 0;
 
 public:
+    GraphList(const char vertex)
+    {
+        _vertex = vertex;
+        _list = new node *[_vertex];
+
+        for (char i = 0; i < _vertex; i++)
+        {
+            *(_list + i) = new node;
+            (*(_list + i))->vertex = i;
+        }
+    }
+
     GraphList(const string fname)
     {
         node *p;
@@ -173,7 +185,7 @@ public:
         {
             *(_list + i) = new node;
             p = *(_list + i);
-            p->vertex = i + 1;
+            p->vertex = i;
             if (debug)
                 cout << '[' << (int)p->vertex << "]";
 
@@ -184,7 +196,7 @@ public:
                 {
                     p->next = new node;
                     p = p->next;
-                    p->vertex = j + 1;
+                    p->vertex = j;
                     if (debug)
                         cout << " -> " << (int)p->vertex;
                 }
@@ -215,6 +227,39 @@ public:
                     cout << " -> ";
             }
             cout << endl;
+        }
+    }
+
+    bool set(const int out, const int in)
+    {
+        if (_vertex < in || _vertex < out || in == out)
+        {
+            return false;
+        }
+        else
+        {
+            node *p = *(_list + out);
+            
+            for (char i = 0; i < in - 1; i++)
+                if (p->next)
+                    p = p->next;
+                else
+                    break;
+            
+            if (p->next && p->next->vertex == in)
+            {
+                p->next = p->next->next;
+            }
+            else
+            {
+                node *np = new node;
+                np->vertex = in;
+                if (p->next)
+                    np->next = p->next;
+                p->next = np;
+            }
+
+            return true;
         }
     }
 };
@@ -250,22 +295,33 @@ private:
 
     void _newGraph(void)
     {
-        char choice;
-        _matrix = new GraphMatrix(_input("Введите количество вершин: ")); //TODO: не открыт ли другой граф?
+        char choice, vertex = _input("Введите количество вершин: ");
+        _matrix = new GraphMatrix(vertex); //TODO: не открыт ли другой граф?
+        _list = new GraphList(vertex);
 
         do
         {
             _matrix->print();
+            cout << endl;
+            _list->print();
             cout << "1. добавить/убрать ребро" << endl
                  << "0. выход" << endl;
             choice = _input("Ввод: ");
 
             if (choice == 1)
             {
-                if (!_matrix->set(_input("Введите входящую вершину: "), _input("Введите исходящую вершину: "))) //TODO: защита от ввода нуля
+                char 
+                    out = _input("Введите исходящую вершину: "),
+                    in = _input("Введите входящую вершину: ");
+
+                if (!_matrix->set(out, in))
                 {
                     cout << "Не удалось добавить ребро!" << endl;
                     cin.get();
+                }
+                else
+                {
+                    _list->set(out, in);
                 }
             }
             else if (choice != 0)
