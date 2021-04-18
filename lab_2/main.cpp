@@ -154,17 +154,76 @@ private:
     typedef struct node
     {
         char vertex;
-        node *next;
+        node *next = nullptr;
     } node;
-    node *arr = nullptr;
-public:
+    node **_list = nullptr;
+    char _vertex = 0;
 
+public:
+    GraphList(const string fname)
+    {
+        node *p;
+        char i, j, tmp;
+        ifstream *fin = new ifstream(fname, ios_base::in);
+
+        *fin >> _vertex;
+        _list = new node *[_vertex];
+
+        for (i = 0; i < _vertex; i++)
+        {
+            *(_list + i) = new node;
+            p = *(_list + i);
+            p->vertex = i + 1;
+            if (debug)
+                cout << '[' << (int)p->vertex << "]";
+
+            for (j = 0; j < _vertex; j++)
+            {
+                fin->get(tmp);
+                if (tmp == 1)
+                {
+                    p->next = new node;
+                    p = p->next;
+                    p->vertex = j + 1;
+                    if (debug)
+                        cout << " -> " << (int)p->vertex;
+                }
+            }
+
+            if (debug)
+                cout << endl;
+        }
+
+        fin->close();
+        delete fin;
+    }
+
+    void print(void)
+    {
+        node **pp, *p;
+
+        for (pp = _list; pp != _list + _vertex; pp++)
+        {
+            for (p = *pp; p != nullptr; p = p->next)
+            {
+                if (p == *pp)
+                    cout << '[' << (int)p->vertex << "]";
+                else
+                    cout << (int)p->vertex << ' ';
+
+                if (p->next != nullptr)
+                    cout << " -> ";
+            }
+            cout << endl;
+        }
+    }
 };
 
 class Menu
 {
 private:
-    GraphMatrix *_graph = nullptr;
+    GraphMatrix *_matrix = nullptr;
+    GraphList *_list = nullptr;
 
     char _input(const string &message)
     {
@@ -192,18 +251,18 @@ private:
     void _newGraph(void)
     {
         char choice;
-        _graph = new GraphMatrix(_input("Введите количество вершин: ")); //TODO: не открыт ли другой граф?
+        _matrix = new GraphMatrix(_input("Введите количество вершин: ")); //TODO: не открыт ли другой граф?
 
         do
         {
-            _graph->print();
+            _matrix->print();
             cout << "1. добавить/убрать ребро" << endl
                  << "0. выход" << endl;
             choice = _input("Ввод: ");
 
             if (choice == 1)
             {
-                if (!_graph->set(_input("Введите входящую вершину: "), _input("Введите исходящую вершину: "))) //TODO: защита от ввода нуля
+                if (!_matrix->set(_input("Введите входящую вершину: "), _input("Введите исходящую вершину: "))) //TODO: защита от ввода нуля
                 {
                     cout << "Не удалось добавить ребро!" << endl;
                     cin.get();
@@ -229,6 +288,7 @@ public:
                  << "4. вывести матрицу смежностей" << endl
                  << "5. найти все вершины орграфа, недостижимые от заданной его вершины" << endl
                  << "6. отладочная печать [" << debug << ']' << endl
+                 << "7. вывести список смежностей" << endl
                  << "0. выход" << endl;
             choice = _input("Ввод: ");
 
@@ -241,28 +301,33 @@ public:
                 string fname;
                 cout << "Введите название графа: ";
                 cin >> fname;
-                _graph->save(fname);
+                _matrix->save(fname);
             }
             else if (choice == 3)
             {
                 string fname;
                 cout << "Введите название графа: ";
                 cin >> fname;
-                _graph = new GraphMatrix(fname);
+                _matrix = new GraphMatrix(fname);
+                _list = new GraphList(fname);
             }
             else if (choice == 4)
             {
-                _graph->print();
+                _matrix->print();
                 cin.get();
             }
             else if (choice == 5)
             {
-                _graph->unattainable(_input("Введите номер вершины: "));
+                _matrix->unattainable(_input("Введите номер вершины: "));
                 cin.get();
             }
             else if (choice == 6)
             {
                 debug = !debug;
+            }
+            else if (choice == 7)
+            {
+                _list->print();
             }
             else if (choice != 0)
             {
