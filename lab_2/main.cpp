@@ -17,19 +17,22 @@ private:
     char _vertex = 0;
 
 public:
-    GraphMatrix(const char vertex) //TODO: прочерки на главной диагонали
+    GraphMatrix(const char vertex)
     {
         _vertex = vertex;
         _matrix = new char *[_vertex];
 
-        char **pp, *p;
+        char i, j;
 
-        for (pp = _matrix; pp != _matrix + _vertex; pp++)
+        for (i = 0; i < _vertex; i++)
         {
-            *pp = new char[_vertex];
+            *(_matrix + i) = new char[_vertex];
 
-            for (p = *pp; p != *pp + _vertex; p++)
-                *p = false;
+            for (j = 0; j < _vertex; j++)
+                if (i != j)
+                    *(*(_matrix + i) + j) = 0;
+                else
+                    *(*(_matrix + i) + j) = '-';
         }
     }
 
@@ -55,7 +58,7 @@ public:
 
     bool set(const int out, const int in)
     {
-        if (_vertex < in || _vertex < out)
+        if (_vertex < in || _vertex < out || in == out)
         {
             return false;
         }
@@ -79,7 +82,10 @@ public:
         for (pp = _matrix; pp != _matrix + _vertex; pp++)
         {
             for (p = *pp; p != *pp + _vertex; p++)
-                cout << (int)*p << ' ';
+                if (*p == '-')
+                    cout << *p << ' ';
+                else
+                    cout << (int)*p << ' ';
 
             cout << endl;
         }
