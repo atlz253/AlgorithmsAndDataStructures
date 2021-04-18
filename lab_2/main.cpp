@@ -11,23 +11,40 @@ using namespace std;
 class GraphMatrix
 {
 private:
-    bool **_matrix = nullptr;
-    int _vertex = 0;
+    char **_matrix = nullptr;
+    char _vertex = 0;
 
 public:
-    GraphMatrix(const int vertex)
+    GraphMatrix(const char vertex)
     {
         _vertex = vertex;
-        _matrix = new bool*[_vertex];
+        _matrix = new char *[_vertex];
 
-        bool **pp, *p;
+        char **pp, *p;
 
         for (pp = _matrix; pp != _matrix + _vertex; pp++)
         {
-            *pp = new bool[_vertex];
+            *pp = new char[_vertex];
 
             for (p = *pp; p != *pp + _vertex; p++)
                 *p = false;
+        }
+    }
+
+    GraphMatrix(const string fname)
+    {
+        ifstream *fin = new ifstream(fname, ios_base::in);
+        char **pp, *p;
+
+        *fin >> _vertex;
+        _matrix = new char *[_vertex];
+
+        for (pp = _matrix; pp != _matrix + _vertex; pp++)
+        {
+            *pp = new char[_vertex];
+
+            for (p = *pp; p != *pp + _vertex; p++)
+                fin->get(*p);
         }
     }
 
@@ -39,25 +56,42 @@ public:
         }
         else
         {
-            *(*(_matrix + in - 1) + out - 1) = !*(*(_matrix + in - 1) + out - 1);
+            char *p = *(_matrix + in - 1) + out - 1;
+
+            if (*p)
+                *p = 0;
+            else
+                *p = 1;
+
             return true;
         }
     }
 
     void print(void)
     {
-        bool **pp, *p;
+        char **pp, *p;
 
         for (pp = _matrix; pp != _matrix + _vertex; pp++)
         {
             for (p = *pp; p != *pp + _vertex; p++)
-                if (*p)
-                    cout << "1 ";
-                else
-                    cout << "0 ";
+                cout << (int)*p << ' ';
 
             cout << endl;
         }
+    }
+
+    void save(const string fname)
+    {
+        ofstream *fout = new ofstream(fname, ios_base::out | ios_base::trunc);
+        char **pp, *p;
+
+        *fout << _vertex;
+        for (pp = _matrix; pp != _matrix + _vertex; pp++)
+            for (p = *pp; p != *pp + _vertex; p++)
+                *fout << *p;
+
+        fout->close();
+        delete fout;
     }
 
     ~GraphMatrix() //TODO: реализовать деструктор
@@ -70,7 +104,7 @@ class Menu
 private:
     GraphMatrix *_graph = nullptr;
 
-    int _input(const string &message)
+    char _input(const string &message)
     {
         while (true)
         {
@@ -95,11 +129,7 @@ private:
 
     void _newGraph(void)
     {
-        // string fname;
-        // cout << "Введите название графа: ";
-        // cin >> fname;
-
-        int choice;
+        char choice;
         _graph = new GraphMatrix(_input("Введите количество вершин: ")); //TODO: не открыт ли другой граф?
 
         do
@@ -109,48 +139,63 @@ private:
                  << "0. выход" << endl;
             choice = _input("Ввод: ");
 
-            switch (choice)
+            if (choice == 1)
             {
-            case 1:
                 if (!_graph->set(_input("Введите входящую вершину: "), _input("Введите исходящую вершину: "))) //TODO: защита от ввода нуля
                 {
                     cout << "Не удалось добавить ребро!" << endl;
                     cin.get();
                 }
-                break;
-            case 0:
-                break;
-            default:
+            }
+            else if (choice != 0)
+            {
                 cout << "Ошибка ввода!" << endl;
-                break;
             }
         } while (choice);
-
-        // ofstream *fout = new ofstream(fname, ios_base::out | ios_base::binary | ios_base::trunc);
     }
 
 public:
     void init(void)
     {
-        int choice;
+        char choice;
 
         do
         {
             cout << "1. создать/перезаписать граф" << endl
+                 << "2. сохранить граф в файл" << endl
+                 << "3. загрузить граф из файла" << endl
+                 << "4. вывести матрицу смежностей" << endl
                  << "0. выход" << endl;
             choice = _input("Ввод: ");
 
-            switch (choice)
+            if (choice == 1)
             {
-            case 1:
                 _newGraph();
-                break;
-            case 0:
-                break;
-            default:
-                cout << "Ошибка ввода!" << endl;
-                break;
             }
+            else if (choice == 2)
+            {
+                string fname;
+                cout << "Введите название графа: ";
+                cin >> fname;
+                _graph->save(fname);
+            }
+            else if (choice == 3)
+            {
+                string fname;
+                cout << "Введите название графа: ";
+                cin >> fname;
+                _graph = new GraphMatrix(fname);
+            }
+            else if (choice == 4)
+            {
+                _graph->print();
+                cin.get();
+            }
+            else if (choice != 0)
+            {
+                cout << "Ошибка ввода!" << endl;
+            }
+
         } while (choice);
     }
 };
