@@ -142,6 +142,19 @@ public:
     }
 };
 
+class GraphList
+{
+private:
+    typedef struct node
+    {
+        char vertex;
+        node *next;
+    } node;
+    node *arr = nullptr;
+public:
+
+};
+
 class Menu
 {
 private:
