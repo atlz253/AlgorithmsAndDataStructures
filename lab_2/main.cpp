@@ -6,6 +6,8 @@
 #include <fstream>
 #include <iostream>
 
+bool debug = false;
+
 using namespace std;
 
 class GraphMatrix
@@ -15,7 +17,7 @@ private:
     char _vertex = 0;
 
 public:
-    GraphMatrix(const char vertex)
+    GraphMatrix(const char vertex) //TODO: прочерки на главной диагонали
     {
         _vertex = vertex;
         _matrix = new char *[_vertex];
@@ -46,6 +48,9 @@ public:
             for (p = *pp; p != *pp + _vertex; p++)
                 fin->get(*p);
         }
+
+        fin->close();
+        delete fin;
     }
 
     bool set(const int out, const int in)
@@ -78,6 +83,44 @@ public:
 
             cout << endl;
         }
+    }
+
+    void unattainable(const char vertex)
+    {
+        char i, j, *mark = new char[_vertex];
+        for (i = 0; i < _vertex; i++)
+            if (i == vertex - 1)
+                *(mark + i) = 1;
+            else
+                *(mark + i) = 0;
+
+        for (i = 0; i < _vertex; i++)
+        {
+            if (*(mark + i) == 1)
+            {
+                for (j = 0; j < _vertex; j++)
+                {
+                    if (*(*(_matrix + i) + j) == 1 && *(mark + j) == 0)
+                        *(mark + j) = 1;
+
+                    if (debug)
+                        cout << "i=" << (int)i << ' ' << (int)*(*(_matrix + i) + j) << ' ' << "j=" << (int)j << ' ' << (int)*(mark + j) << endl;
+                }
+                if (debug)
+                    cout << endl;
+
+                *(mark + i) = 2;
+                i = 0;
+            }
+        }
+
+        cout << "Недостижимые вершины: ";
+        for (i = 0; i < _vertex; i++)
+            if (*(mark + i) == 0)
+                cout << '(' << i + 1 << ") ";
+        cout << endl;
+
+        delete mark;
     }
 
     void save(const string fname)
@@ -165,6 +208,8 @@ public:
                  << "2. сохранить граф в файл" << endl
                  << "3. загрузить граф из файла" << endl
                  << "4. вывести матрицу смежностей" << endl
+                 << "5. найти все вершины орграфа, недостижимые от заданной его вершины" << endl
+                 << "6. отладочная печать [" << debug << ']' << endl
                  << "0. выход" << endl;
             choice = _input("Ввод: ");
 
@@ -190,6 +235,15 @@ public:
             {
                 _graph->print();
                 cin.get();
+            }
+            else if (choice == 5)
+            {
+                _graph->unattainable(_input("Введите номер вершины: "));
+                cin.get();
+            }
+            else if (choice == 6)
+            {
+                debug = !debug;
             }
             else if (choice != 0)
             {
