@@ -96,33 +96,33 @@ public:
         char i, j, *mark = new char[_vertex];
         for (i = 0; i < _vertex; i++)
             if (i == vertex)
-                *(mark + i) = 1;
+                mark[i] = 1;
             else
-                *(mark + i) = 0;
+                mark[i] = 0;
 
         for (i = 0; i < _vertex; i++)
         {
-            if (*(mark + i) == 1)
+            if (mark[i] == 1)
             {
                 for (j = 0; j < _vertex; j++)
                 {
-                    if (*(*(_matrix + i) + j) == 1 && *(mark + j) == 0)
-                        *(mark + j) = 1;
+                    if (_matrix[i][j] == 1 && mark[j] == 0)
+                        mark[j] = 1;
 
                     if (debug)
-                        cout << "i=" << (int)i << ' ' << (int)*(*(_matrix + i) + j) << ' ' << "j=" << (int)j << ' ' << (int)*(mark + j) << endl;
+                        cout << "i=" << (int)i << ' ' << (int)_matrix[i][j] << ' ' << "j=" << (int)j << ' ' << (int)mark[j] << endl;
                 }
                 if (debug)
                     cout << endl;
 
-                *(mark + i) = 2;
+                mark[i] = 2;
                 i = 0;
             }
         }
 
         cout << "Недостижимые вершины: ";
         for (i = 0; i < _vertex; i++)
-            if (*(mark + i) == 0)
+            if (mark[i] == 0)
                 cout << '(' << (int)i << ") ";
         cout << endl;
 
@@ -241,13 +241,13 @@ public:
         else
         {
             node *p = *(_list + out);
-            
+
             for (char i = 0; i < in - 1; i++)
                 if (p->next)
                     p = p->next;
                 else
                     break;
-            
+
             if (p->next && p->next->vertex == in)
             {
                 p->next = p->next->next;
@@ -270,31 +270,31 @@ public:
         char i, j, *mark = new char[_vertex];
         for (i = 0; i < _vertex; i++)
             if (i == vertex)
-                *(mark + i) = 1;
+                mark[i] = 1;
             else
-                *(mark + i) = 0;
+                mark[i] = 0;
 
         for (i = 0; i < _vertex; i++)
         {
-            if (*(mark + i) == 1)
+            if (mark[i] == 1)
             {
-                node *p = (*(_list + i))->next;
+                node *p = (_list[i])->next;
 
                 while (p)
                 {
-                    if (*(mark + p->vertex) == 0)
-                        *(mark + p->vertex) = 1;
+                    if (mark[p->vertex] == 0)
+                        mark[p->vertex] = 1;
                     p = p->next;
                 }
 
-                *(mark + i) = 2;
+                mark[i] = 2;
                 i = 0;
             }
         }
 
         cout << "Недостижимые вершины: ";
         for (i = 0; i < _vertex; i++)
-            if (*(mark + i) == 0)
+            if (mark[i] == 0)
                 cout << '(' << (int)i << ") ";
         cout << endl;
 
@@ -364,7 +364,7 @@ private:
 
             if (choice == 1)
             {
-                char 
+                char
                     out = _input("Введите исходящую вершину: "),
                     in = _input("Введите входящую вершину: ");
 
