@@ -6,6 +6,10 @@
 #include <fstream>
 #include <iostream>
 
+#define CLEAR \
+    if (1)    \
+        system("clear");
+
 bool debug = false;
 
 using namespace std;
@@ -352,46 +356,64 @@ private:
         char choice, vertex = _input("Введите количество вершин: ");
         _matrix = new GraphMatrix(vertex);
         _list = new GraphList(vertex);
+        _editGraph();
+    }
 
-        do
+    void _editGraph()
+    {
+        if (_matrix)
         {
-            _matrix->print();
-            cout << endl;
-            _list->print();
-            cout << "1. добавить/убрать ребро" << endl
-                 << "0. выход" << endl;
-            choice = _input("Ввод: ");
+            char choice;
 
-            if (choice == 1)
+            do
             {
-                char
-                    out = _input("Введите исходящую вершину: "),
-                    in = _input("Введите входящую вершину: ");
+                _matrix->print();
+                cout << endl;
+                _list->print();
+                cout << endl;
+                cout << "1. добавить/убрать ребро" << endl
+                     << "0. выход" << endl;
+                choice = _input("Ввод: ");
 
-                if (!_matrix->set(out, in))
+                if (choice == 1)
                 {
-                    cout << "Не удалось добавить ребро!" << endl;
-                    cin.get();
+                    char
+                        out = _input("Введите исходящую вершину: "),
+                        in = _input("Введите входящую вершину: ");
+
+                    if (!_matrix->set(out, in))
+                    {
+                        cout << "Не удалось добавить ребро!" << endl;
+                        cin.get();
+                    }
+                    else
+                    {
+                        _list->set(out, in);
+                    }
                 }
-                else
+                else if (choice != 0)
                 {
-                    _list->set(out, in);
+                    cout << "Ошибка ввода!" << endl;
                 }
-            }
-            else if (choice != 0)
-            {
-                cout << "Ошибка ввода!" << endl;
-            }
-        } while (choice);
+                CLEAR;
+            } while (choice);
+        }
+        else
+        {
+            cout << "Создайте или загрузите граф!" << endl;
+            cin.get();
+        }
     }
 
 public:
     void init(void)
     {
+        CLEAR;
         char choice;
 
         do
         {
+            CLEAR;
             cout << "1. создать/перезаписать граф" << endl
                  << "2. сохранить граф в файл" << endl
                  << "3. загрузить граф из файла" << endl
@@ -399,15 +421,18 @@ public:
                  << "5. найти все вершины орграфа, недостижимые от заданной его вершины" << endl
                  << "6. отладочная печать [" << debug << ']' << endl
                  << "7. вывести список смежностей" << endl
+                 << "8. редактировать граф" << endl
                  << "0. выход" << endl;
             choice = _input("Ввод: ");
 
             if (choice == 1)
             {
+                CLEAR;
                 _newGraph();
             }
             else if (choice == 2)
             {
+                CLEAR;
                 string fname;
                 cout << "Введите название графа: ";
                 cin >> fname;
@@ -415,6 +440,7 @@ public:
             }
             else if (choice == 3)
             {
+                CLEAR;
                 string fname;
                 cout << "Введите название графа: ";
                 cin >> fname;
@@ -423,11 +449,13 @@ public:
             }
             else if (choice == 4)
             {
+                CLEAR;
                 _matrix->print();
                 cin.get();
             }
             else if (choice == 5)
             {
+                CLEAR;
                 char vertex = _input("Введите номер вершины: ");
                 cout << "матрица смежностей: ";
                 _matrix->dfs(vertex);
@@ -441,11 +469,20 @@ public:
             }
             else if (choice == 7)
             {
+                CLEAR;
                 _list->print();
+                cin.get();
+            }
+            else if (choice == 8)
+            {
+                CLEAR;
+                _editGraph();
             }
             else if (choice != 0)
             {
+                CLEAR;
                 cout << "Ошибка ввода!" << endl;
+                cin.get();
             }
 
         } while (choice);
@@ -453,6 +490,7 @@ public:
 
     ~Menu()
     {
+        CLEAR;
         delete _matrix;
         delete _list;
     }
