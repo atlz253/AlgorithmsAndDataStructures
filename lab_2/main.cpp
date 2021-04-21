@@ -26,13 +26,13 @@ public:
 
         for (i = 0; i < _vertex; i++)
         {
-            *(_matrix + i) = new char[_vertex];
+            _matrix[i] = new char[_vertex];
 
             for (j = 0; j < _vertex; j++)
                 if (i != j)
-                    *(*(_matrix + i) + j) = 0;
+                    _matrix[i][j] = 0;
                 else
-                    *(*(_matrix + i) + j) = '-';
+                    _matrix[i][j] = '-';
         }
     }
 
@@ -64,7 +64,7 @@ public:
         }
         else
         {
-            char *p = *(_matrix + out) + in;
+            char *p = _matrix[out] + in;
 
             if (*p)
                 *p = 0;
@@ -169,8 +169,8 @@ public:
 
         for (char i = 0; i < _vertex; i++)
         {
-            *(_list + i) = new node;
-            (*(_list + i))->vertex = i;
+            _list[i] = new node;
+            _list[i]->vertex = i;
         }
     }
 
@@ -185,8 +185,8 @@ public:
 
         for (i = 0; i < _vertex; i++)
         {
-            *(_list + i) = new node;
-            p = *(_list + i);
+            _list[i] = new node;
+            p = _list[i];
             p->vertex = i;
             if (debug)
                 cout << '[' << (int)p->vertex << "]";
@@ -240,7 +240,7 @@ public:
         }
         else
         {
-            node *p = *(_list + out);
+            node *p = _list[out];
 
             for (char i = 0; i < in - 1; i++)
                 if (p->next)
