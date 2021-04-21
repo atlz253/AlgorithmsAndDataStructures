@@ -91,7 +91,7 @@ public:
         }
     }
 
-    void unattainable(const char vertex)
+    char *dfs(const char vertex)
     {
         char i, j, *mark = new char[_vertex];
         for (i = 0; i < _vertex; i++)
@@ -265,7 +265,7 @@ public:
         }
     }
 
-    void unattainable(const char vertex)
+    void dfs(const char vertex)
     {
         char i, j, *mark = new char[_vertex];
         for (i = 0; i < _vertex; i++)
@@ -430,9 +430,9 @@ public:
             {
                 char vertex = _input("Введите номер вершины: ");
                 cout << "матрица смежностей: ";
-                _matrix->unattainable(vertex);
+                _matrix->dfs(vertex);
                 cout << "список смежностей: ";
-                _list->unattainable(vertex);
+                _list->dfs(vertex);
                 cin.get();
             }
             else if (choice == 6)
