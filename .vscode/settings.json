@@ -5,6 +5,9 @@
         "iostream": "cpp",
         "ostream": "cpp",
         "new": "cpp",
-        "*.tcc": "cpp"
+        "*.tcc": "cpp",
+        "typeinfo": "cpp",
+        "random": "cpp",
+        "fstream": "cpp"
     }
 }
