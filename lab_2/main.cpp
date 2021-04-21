@@ -60,9 +60,9 @@ public:
         delete fin;
     }
 
-    bool set(const int out, const int in)
+    bool set(const char out, const char in)
     {
-        if (_vertex < in || _vertex < out || in == out)
+        if (_vertex <= in || _vertex <= out || in == out)
         {
             return false;
         }
@@ -95,7 +95,7 @@ public:
         }
     }
 
-    char *dfs(const char vertex)
+    void dfs(const char vertex)
     {
         char i, j, *mark = new char[_vertex];
         for (i = 0; i < _vertex; i++)
@@ -236,9 +236,9 @@ public:
         }
     }
 
-    bool set(const int out, const int in)
+    bool set(const char out, const char in)
     {
-        if (_vertex < in || _vertex < out || in == out)
+        if (_vertex <= in || _vertex <= out || in == out)
         {
             return false;
         }
@@ -246,8 +246,8 @@ public:
         {
             node *p = _list[out];
 
-            for (char i = 0; i < in - 1; i++)
-                if (p->next)
+            for (char i = 0; i < in; i++)
+                if (p->next && p->next->vertex < in)
                     p = p->next;
                 else
                     break;
