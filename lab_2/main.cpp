@@ -143,8 +143,10 @@ public:
         delete fout;
     }
 
-    ~GraphMatrix() //TODO: реализовать деструктор
+    ~GraphMatrix()
     {
+        for (char i = 0; i < _vertex; i++)
+            delete _matrix[i];
     }
 };
 
@@ -298,6 +300,22 @@ public:
 
         delete mark;
     }
+
+    ~GraphList()
+    {
+        char i;
+        node *p;
+
+        for (i = 0; i < _vertex; i++)
+        {
+            while (_list[i] != nullptr)
+            {
+                p = _list[i];
+                _list[i] = _list[i]->next;
+                delete p;
+            }
+        }
+    }
 };
 
 class Menu
@@ -332,7 +350,7 @@ private:
     void _newGraph(void)
     {
         char choice, vertex = _input("Введите количество вершин: ");
-        _matrix = new GraphMatrix(vertex); //TODO: не открыт ли другой граф?
+        _matrix = new GraphMatrix(vertex);
         _list = new GraphList(vertex);
 
         do
@@ -431,6 +449,12 @@ public:
             }
 
         } while (choice);
+    }
+
+    ~Menu()
+    {
+        delete _matrix;
+        delete _list;
     }
 };
 
