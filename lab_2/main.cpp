@@ -108,10 +108,9 @@ public:
 
         s.push(vertex);
 
-        while (!s.empty()) //TODO: реализовать чистый алгоритм в глубину
+        while (!s.empty())
         {
             i = s.top();
-            s.pop();
 
             for (j = 0; j < _vertex; j++)
             {
@@ -119,6 +118,11 @@ public:
                 {
                     mark[j] = 1;
                     s.push(j);
+                    break;
+                }
+                else if (j == _vertex -1)
+                {
+                    s.pop();
                 }
             }
         }
@@ -150,6 +154,7 @@ public:
     {
         for (char i = 0; i < _vertex; i++)
             delete _matrix[i];
+        delete _matrix;
     }
 };
 
