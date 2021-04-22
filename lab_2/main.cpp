@@ -2,6 +2,7 @@
 Найти все вершины орграфа, недостижимые от заданной его вершины
 */
 
+#include <stack>
 #include <string>
 #include <fstream>
 #include <iostream>
@@ -97,6 +98,7 @@ public:
 
     void dfs(const char vertex)
     {
+        stack<char> s;
         char i, j, *mark = new char[_vertex];
         for (i = 0; i < _vertex; i++)
             if (i == vertex)
@@ -104,23 +106,20 @@ public:
             else
                 mark[i] = 0;
 
-        for (i = 0; i < _vertex; i++)
+        s.push(vertex);
+
+        while (!s.empty()) //TODO: реализовать чистый алгоритм в глубину
         {
-            if (mark[i] == 1)
+            i = s.top();
+            s.pop();
+
+            for (j = 0; j < _vertex; j++)
             {
-                for (j = 0; j < _vertex; j++)
+                if (_matrix[i][j] == 1 && mark[j] == 0)
                 {
-                    if (_matrix[i][j] == 1 && mark[j] == 0)
-                        mark[j] = 1;
-
-                    if (debug)
-                        cout << "i=" << (int)i << ' ' << (int)_matrix[i][j] << ' ' << "j=" << (int)j << ' ' << (int)mark[j] << endl;
+                    mark[j] = 1;
+                    s.push(j);
                 }
-                if (debug)
-                    cout << endl;
-
-                mark[i] = 2;
-                i = 0;
             }
         }
 
@@ -271,35 +270,39 @@ public:
 
     void dfs(const char vertex)
     {
+        stack<char> s;
         char i, j, *mark = new char[_vertex];
+
         for (i = 0; i < _vertex; i++)
             if (i == vertex)
                 mark[i] = 1;
             else
                 mark[i] = 0;
 
-        for (i = 0; i < _vertex; i++)
+        s.push(vertex);
+
+        while (!s.empty())
         {
-            if (mark[i] == 1)
+            node *p = (_list[s.top()])->next;
+            s.pop();
+
+            while (p)
             {
-                node *p = (_list[i])->next;
-
-                while (p)
+                if (mark[p->vertex] == 0)
                 {
-                    if (mark[p->vertex] == 0)
-                        mark[p->vertex] = 1;
-                    p = p->next;
+                    mark[p->vertex] = 1;
+                    s.push(p->vertex);
                 }
-
-                mark[i] = 2;
-                i = 0;
+                p = p->next;
             }
         }
 
         cout << "Недостижимые вершины: ";
         for (i = 0; i < _vertex; i++)
+        {
             if (mark[i] == 0)
                 cout << '(' << (int)i << ") ";
+        } 
         cout << endl;
 
         delete mark;
@@ -319,6 +322,7 @@ public:
                 delete p;
             }
         }
+        delete _list;
     }
 };
 
