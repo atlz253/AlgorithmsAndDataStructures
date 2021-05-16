@@ -34,18 +34,45 @@ private:
         return cpy;
     }
 
-    void _bubbleSort(void)
+    void _reverseArr(void)
     {
-        int *arr = _arrCpy(), tmp;
+        cout << "Sorter: сортируем массив в обратном порядке" << endl;
+        int tmp;
 
         for (int i = 0; i < _N; i++)
-            for (int *j = arr; j != arr + _N - 1; j++)
-                if(*j > *(j + 1))
+            for (int *j = _arr; j != _arr + _N - 1; j++)
+            {
+
+                if (*j < *(j + 1))
                 {
                     tmp = *j;
                     *j = *(j + 1);
                     *(j + 1) = tmp;
                 }
+            }
+    }
+
+    void _bubbleSort(int *arr)
+    {
+        int tmp;
+        unsigned long int compare = 0, operations = 0;
+
+        for (int i = 0; i < _N; i++)
+        {
+            for (int *j = arr; j != arr + _N - 1; j++)
+            {
+                compare++;
+                if (*j > *(j + 1))
+                {
+                    tmp = *j;
+                    *j = *(j + 1);
+                    *(j + 1) = tmp;
+                    operations += 2;
+                }
+            }
+        }
+
+        cout << "Пузырьковая сортировка: операций над элементами массива - " << operations << " количество сравнений - " << compare << endl;
     }
 
     void _printArr(int *arr)
@@ -54,6 +81,7 @@ private:
             cout << *i << ' ';
         cout << endl;
     }
+
 public:
     Sorter(int N)
     {
@@ -65,7 +93,15 @@ public:
 
     void run(void)
     {
-        _bubbleSort();
+        cout << "Sorter: сортировка неупорядоченного массива" << endl;
+        _bubbleSort(_arr);
+
+        cout << "Sorter: сортировка упорядоченного массива" << endl;
+        _bubbleSort(_arrCpy());
+
+        cout << "Sorter: сортировка массива, упорядоченного в обратном порядке" << endl;
+        _reverseArr();
+        _bubbleSort(_arrCpy());
     }
 
     ~Sorter()
@@ -85,13 +121,17 @@ public:
         while (true)
         {
             cout << "1. тест массива на 10000 элементов" << endl
+                 << "2. тест массива на 50000 элементов" << endl
                  << "0. выход" << endl;
             cin >> choice;
 
             switch (choice)
             {
             case 1:
-                Sorter(10).run();
+                Sorter(10000).run();
+                break;
+            case 2:
+                Sorter(50000).run();
                 break;
             case 0:
                 return 1;
