@@ -1,3 +1,4 @@
+#include <ctime>
 #include <fstream>
 #include <iostream>
 
@@ -55,7 +56,7 @@ private:
     void _bubbleSort(int *arr)
     {
         int tmp;
-        unsigned long int compare = 0, operations = 0;
+        unsigned long int compare = 0, operations = 0, start_time = clock(), end_time;
 
         for (int i = 0; i < _N; i++)
         {
@@ -71,8 +72,9 @@ private:
                 }
             }
         }
+        end_time = clock();
 
-        cout << "Пузырьковая сортировка: операций над элементами массива - " << operations << " количество сравнений - " << compare << endl;
+        cout << "Пузырьковая сортировка: операций над элементами массива - " << operations << " количество сравнений - " << compare << " время - " << end_time - start_time << " мс" << endl;
     }
 
     void _printArr(int *arr)
