@@ -39,7 +39,7 @@ private:
         int *arr = _arrCpy(), tmp;
 
         for (int i = 0; i < _N; i++)
-            for (int *j = arr; j != arr + _N; j++)
+            for (int *j = arr; j != arr + _N - 1; j++)
                 if(*j > *(j + 1))
                 {
                     tmp = *j;
