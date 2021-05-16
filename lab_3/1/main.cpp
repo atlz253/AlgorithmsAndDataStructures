@@ -77,6 +77,45 @@ private:
         cout << "Пузырьковая сортировка: операций над элементами массива - " << operations << " количество сравнений - " << compare << " время - " << end_time - start_time << " мс" << endl;
     }
 
+    void _shakerSort(int *arr)
+    {
+        int tmp;
+        bool sort_or_not = true;
+        unsigned long int compare = 0, operations = 0, start_time = clock(), end_time;
+
+        do
+        {
+            sort_or_not = true;
+            for (int *i = arr; i != arr + _N - 1; i++)
+            {
+                compare++;
+                if (*i > *(i + 1))
+                {
+                    tmp = *i;
+                    *i = *(i + 1);
+                    *(i + 1) = tmp;
+                    sort_or_not = false;
+                    operations += 2;
+                }
+            }
+            for (int *i = arr + _N - 1; i != arr; i--)
+            {
+                compare++;
+                if (*i < *(i - 1))
+                {
+                    tmp = *i;
+                    *i = *(i - 1);
+                    *(i - 1) = tmp;
+                    sort_or_not = false;
+                    operations += 2;
+                }
+            }
+        } while (sort_or_not == false);
+        end_time = clock();
+
+        cout << "Шейкерная сортировка: операций над элементами массива - " << operations << " количество сравнений - " << compare << " время - " << end_time - start_time << " мс" << endl;
+    }
+
     void _printArr(int *arr)
     {
         for (int *i = arr; i != arr + _N; i++)
@@ -96,14 +135,17 @@ public:
     void run(void)
     {
         cout << "Sorter: сортировка неупорядоченного массива" << endl;
-        _bubbleSort(_arr);
+        _bubbleSort(_arrCpy());
+        _shakerSort(_arr);
 
         cout << "Sorter: сортировка упорядоченного массива" << endl;
         _bubbleSort(_arrCpy());
+        _shakerSort(_arrCpy());
 
         cout << "Sorter: сортировка массива, упорядоченного в обратном порядке" << endl;
         _reverseArr();
         _bubbleSort(_arrCpy());
+        _shakerSort(_arrCpy());
     }
 
     ~Sorter()
