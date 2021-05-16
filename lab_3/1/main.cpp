@@ -23,6 +23,37 @@ private:
         f.close();
     }
 
+    int *_arrCpy(void)
+    {
+        cout << "Sorter: создаем копию исходного массива" << endl;
+        int *cpy = new int[_N];
+
+        for (int *i = _arr, *j = cpy; i != _arr + _N; i++, j++)
+            *j = *i;
+
+        return cpy;
+    }
+
+    void _bubbleSort(void)
+    {
+        int *arr = _arrCpy(), tmp;
+
+        for (int i = 0; i < _N; i++)
+            for (int *j = arr; j != arr + _N; j++)
+                if(*j > *(j + 1))
+                {
+                    tmp = *j;
+                    *j = *(j + 1);
+                    *(j + 1) = tmp;
+                }
+    }
+
+    void _printArr(int *arr)
+    {
+        for (int *i = arr; i != arr + _N; i++)
+            cout << *i << ' ';
+        cout << endl;
+    }
 public:
     Sorter(int N)
     {
@@ -34,6 +65,7 @@ public:
 
     void run(void)
     {
+        _bubbleSort();
     }
 
     ~Sorter()
@@ -59,7 +91,7 @@ public:
             switch (choice)
             {
             case 1:
-                Sorter(10000).run();
+                Sorter(10).run();
                 break;
             case 0:
                 return 1;
