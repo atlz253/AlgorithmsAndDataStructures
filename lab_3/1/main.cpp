@@ -116,6 +116,67 @@ private:
         cout << "Шейкерная сортировка: операций над элементами массива - " << operations << " количество сравнений - " << compare << " время - " << end_time - start_time << " мс" << endl;
     }
 
+    void _quickSort(int *arr, int left, int right)
+    {
+        int pivot;
+        int l = left, l_hold = l;
+        int r = right, r_hold = r;
+        pivot = arr[l];
+        static unsigned long int compare = 0, operations = 0, start_time, end_time;
+
+        if (l == 0 && r == _N - 1)
+            start_time = clock();
+
+        while (l < r)
+        {
+            compare++;
+            while ((arr[r] >= pivot) && (l < r))
+            {
+                compare += 2;
+                r--;
+            }
+            if (l != r)
+            {
+                compare++;
+                arr[l] = arr[r];
+                operations++;
+                l++;
+            }
+            while ((arr[l] <= pivot) && (l < r))
+            {
+                compare += 2;
+                l++;
+            }
+            if (l != r)
+            {
+                compare++;
+                arr[r] = arr[l];
+                operations++;
+                r--;
+            }
+        }
+        arr[l] = pivot;
+        operations++;
+        pivot = l;
+        l = l_hold;
+        r = r_hold;
+        if (l < pivot)
+        {
+            compare++;
+            _quickSort(arr, l, pivot - 1);
+        }
+        if (r > pivot)
+        {
+            compare++;
+            _quickSort(arr, pivot + 1, r);
+        }
+        if (l == 0 && r == _N - 1)
+        {
+            end_time = clock();
+            cout << "Быстрая сортировка: операций над элементами массива - " << operations << " количество сравнений - " << compare << " время - " << end_time - start_time << " мс" << endl;
+        }
+    }
+
     void _printArr(int *arr)
     {
         for (int *i = arr; i != arr + _N; i++)
@@ -136,16 +197,19 @@ public:
     {
         cout << "Sorter: сортировка неупорядоченного массива" << endl;
         _bubbleSort(_arrCpy());
-        _shakerSort(_arr);
+        _shakerSort(_arrCpy());
+        _quickSort(_arr, 0, _N - 1);
 
         cout << "Sorter: сортировка упорядоченного массива" << endl;
         _bubbleSort(_arrCpy());
         _shakerSort(_arrCpy());
+        _quickSort(_arrCpy(), 0, _N - 1);
 
         cout << "Sorter: сортировка массива, упорядоченного в обратном порядке" << endl;
         _reverseArr();
         _bubbleSort(_arrCpy());
         _shakerSort(_arrCpy());
+        _quickSort(_arrCpy(), 0, _N - 1);
     }
 
     ~Sorter()
