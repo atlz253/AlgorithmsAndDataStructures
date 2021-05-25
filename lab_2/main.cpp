@@ -307,7 +307,7 @@ public:
         {
             if (mark[i] == 0)
                 cout << '(' << (int)i << ") ";
-        } 
+        }
         cout << endl;
 
         delete mark;

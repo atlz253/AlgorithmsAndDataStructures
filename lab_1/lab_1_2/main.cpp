@@ -242,7 +242,7 @@ public:
         if (_last && _first != _last)
         {
             int *p = _first + 1;
-            
+
             *(p - 1) = *p;
             while (p != _last)
             {
