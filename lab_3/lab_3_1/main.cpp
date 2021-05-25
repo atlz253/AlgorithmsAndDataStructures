@@ -13,6 +13,7 @@ class Sorter final
   unsigned long int _start_time;
   unsigned long int _compare = 0;
   unsigned long int _operations = 0;
+  unsigned long int _memory = 0;
 
   void _loadArr(void)
   {
@@ -42,6 +43,7 @@ class Sorter final
   {
     _compare = 0;
     _operations = 0;
+    _memory = 0;
     _start_time = clock();
   }
 
@@ -65,6 +67,7 @@ class Sorter final
   void _bubbleSort(int *arr)
   {
     int tmp;
+    _memory = 3 * sizeof(int);
 
     for (int i = 0; i < _N; i++)
     {
@@ -88,6 +91,7 @@ class Sorter final
   {
     int tmp;
     bool sort_or_not = true;
+    _memory = sizeof(int) + sizeof(bool) + sizeof(int *);
 
     do
     {
@@ -127,6 +131,7 @@ class Sorter final
     int pivot;
     int l_hold = left;
     int r_hold = right;
+    _memory = 3 * sizeof(int);
     pivot = arr[left];
 
     while (left < right)
@@ -180,6 +185,7 @@ class Sorter final
     char flag = 0, sorted = 0;
     int pos1, pos2, pos3;
     tmp = (int *)malloc(_N * sizeof(int));
+    _memory = 5 * sizeof(int) + 2 * sizeof(int *) + _N * sizeof(int);
     do /* если есть более 1 элемента */
     {
       end = _N;
@@ -266,50 +272,58 @@ class Sorter final
     _bubbleSort(_arrCpy());
     _time = clock() - _start_time;
     cout << "Пузырьковая сортировка: операций над элементами массива - " << _operations << " количество сравнений - "
-         << _compare << " время - " << _time << " мс" << endl;
+         << _compare << " время - " << _time << " мс"
+         << " объем требуемой доп памяти - " << _memory << endl;
 
     _clearResults();
     _shakerSort(_arrCpy());
     _time = clock() - _start_time;
     cout << "Шейкерная сортировка: операций над элементами массива - " << _operations << " количество сравнений - "
-         << _compare << " время - " << _time << " мс" << endl;
+         << _compare << " время - " << _time << " мс"
+         << " объем требуемой доп памяти - " << _memory << endl;
 
     _clearResults();
     _quickSort(_arrCpy(), 0, _N - 1);
     _time = clock() - _start_time;
     cout << "Быстрая сортировка: операций над элементами массива - " << _operations << " количество сравнений - "
-         << _compare << " время - " << _time << " мс" << endl;
+         << _compare << " время - " << _time << " мс"
+         << " объем требуемой доп памяти - " << _memory << endl;
 
     _clearResults();
     _naturalMerge(_arr);
     _time = clock() - _start_time;
     cout << "Сортировка естественным слиянием: операций над элементами массива - " << _operations
-         << " количество сравнений - " << _compare << " время - " << _time << " мс" << endl;
+         << " количество сравнений - " << _compare << " время - " << _time << " мс"
+         << " объем требуемой доп памяти - " << _memory << endl;
 
     cout << endl << endl << "Sorter: сортировка упорядоченного массива" << endl;
     _clearResults();
     _bubbleSort(_arr);
     _time = clock() - _start_time;
     cout << "Пузырьковая сортировка: операций над элементами массива - " << _operations << " количество сравнений - "
-         << _compare << " время - " << _time << " мс" << endl;
+         << _compare << " время - " << _time << " мс"
+         << " объем требуемой доп памяти - " << _memory << endl;
 
     _clearResults();
     _shakerSort(_arr);
     _time = clock() - _start_time;
     cout << "Шейкерная сортировка: операций над элементами массива - " << _operations << " количество сравнений - "
-         << _compare << " время - " << _time << " мс" << endl;
+         << _compare << " время - " << _time << " мс"
+         << " объем требуемой доп памяти - " << _memory << endl;
 
     _clearResults();
     _quickSort(_arr, 0, _N - 1);
     _time = clock() - _start_time;
     cout << "Быстрая сортировка: операций над элементами массива - " << _operations << " количество сравнений - "
-         << _compare << " время - " << _time << " мс" << endl;
+         << _compare << " время - " << _time << " мс"
+         << " объем требуемой доп памяти - " << _memory << endl;
 
     _clearResults();
     _naturalMerge(_arr);
     _time = clock() - _start_time;
     cout << "Сортировка естественным слиянием: операций над элементами массива - " << _operations
-         << " количество сравнений - " << _compare << " время - " << _time << " мс" << endl;
+         << " количество сравнений - " << _compare << " время - " << _time << " мс"
+         << " объем требуемой доп памяти - " << _memory << endl;
 
     cout << endl << endl << "Sorter: сортировка массива, упорядоченного в обратном порядке" << endl;
     _reverseArr();
@@ -318,25 +332,29 @@ class Sorter final
     _bubbleSort(_arrCpy());
     _time = clock() - _start_time;
     cout << "Пузырьковая сортировка: операций над элементами массива - " << _operations << " количество сравнений - "
-         << _compare << " время - " << _time << " мс" << endl;
+         << _compare << " время - " << _time << " мс"
+         << " объем требуемой доп памяти - " << _memory << endl;
 
     _clearResults();
     _shakerSort(_arrCpy());
     _time = clock() - _start_time;
     cout << "Шейкерная сортировка: операций над элементами массива - " << _operations << " количество сравнений - "
-         << _compare << " время - " << _time << " мс" << endl;
+         << _compare << " время - " << _time << " мс"
+         << " объем требуемой доп памяти - " << _memory << endl;
 
     _clearResults();
     _quickSort(_arrCpy(), 0, _N - 1);
     _time = clock() - _start_time;
     cout << "Быстрая сортировка: операций над элементами массива - " << _operations << " количество сравнений - "
-         << _compare << " время - " << _time << " мс" << endl;
+         << _compare << " время - " << _time << " мс"
+         << " объем требуемой доп памяти - " << _memory << endl;
 
     _clearResults();
     _naturalMerge(_arr);
     _time = clock() - _start_time;
     cout << "Сортировка естественным слиянием: операций над элементами массива - " << _operations
-         << " количество сравнений - " << _compare << " время - " << _time << " мс" << endl;
+         << " количество сравнений - " << _compare << " время - " << _time << " мс"
+         << " объем требуемой доп памяти - " << _memory << endl;
   }
 
   ~Sorter() { delete _arr; }
