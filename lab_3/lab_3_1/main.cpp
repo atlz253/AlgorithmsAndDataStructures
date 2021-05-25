@@ -158,7 +158,6 @@ class Sorter final
       }
     }
     arr[left] = pivot;
-    _operations++;
     pivot = left;
     left = l_hold;
     right = r_hold;
