@@ -4,4 +4,10 @@ CONFIG -= app_bundle
 CONFIG -= qt
 
 SOURCES += \
-        main.cpp
+        avl.cpp \
+        main.cpp \
+        splay.cpp
+
+HEADERS += \
+  avl.h \
+  splay.h

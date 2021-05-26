@@ -131,7 +131,7 @@ class Sorter final
     int pivot;
     int l_hold = left;
     int r_hold = right;
-    _memory = 3 * sizeof(int);
+    _memory += 3 * sizeof(int);
     pivot = arr[left];
 
     while (left < right)
