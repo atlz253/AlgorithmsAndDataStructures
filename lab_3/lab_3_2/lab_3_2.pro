@@ -5,7 +5,9 @@ CONFIG -= qt
 
 SOURCES += \
         avl.cpp \
-        main.cpp
+        main.cpp \
+        splay.cpp
 
 HEADERS += \
-  avl.hpp
+  avl.hpp \
+  splay.hpp
