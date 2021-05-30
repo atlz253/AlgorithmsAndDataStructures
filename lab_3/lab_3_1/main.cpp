@@ -1,20 +1,17 @@
 #include <cmath>
 #include <ctime>
-#include <string>
 #include <fstream>
 #include <iostream>
+#include <string>
 
 #define N1 10000
 #define N2 50000
 #define N3 100000
 #define N4 150000
 
-
 using namespace std;
 
-const string WHITE = "\033[0;37m", RED = "\033[0;31m", GREEN = "\033[0;32m", YELLOW = "\033[0;33m",
-                  GREY = "\033[0;90m";
-
+const string WHITE = "\033[0;37m", RED = "\033[0;31m", GREEN = "\033[0;32m", YELLOW = "\033[0;33m", GREY = "\033[0;90m";
 
 class Sorter final
 {
@@ -27,11 +24,11 @@ class Sorter final
   unsigned long int _primaryCmp = 0;
   unsigned long int _memory = 0;
 
-  void _loadArr(void)
+  void _loadArr(std::string filePath)
   {
     cout << "Sorter: считываем числа из test_numbers.txt" << endl;
     ifstream f;
-    f.open("../test_numbers.txt", ios_base::in);
+    f.open(filePath, ios_base::in);
 
     for (int *i = _arr; i != _arr + _N; i++)
     {
@@ -108,9 +105,9 @@ class Sorter final
       for (int *j = arr; j != arr + _N - 1; j++)
       {
         _otherCmp++;
+        _primaryCmp++;
         if (*j > *(j + 1))
         {
-          _primaryCmp++;
           tmp = *j;
           *j = *(j + 1);
           *(j + 1) = tmp;
@@ -131,9 +128,9 @@ class Sorter final
       for (int *i = arr; i != arr + _N - 1; i++)
       {
         _otherCmp++;
+        _primaryCmp++;
         if (*i > *(i + 1))
         {
-          _primaryCmp++;
           tmp = *i;
           *i = *(i + 1);
           *(i + 1) = tmp;
@@ -143,9 +140,9 @@ class Sorter final
       for (int *i = arr + _N - 1; i != arr; i--)
       {
         _otherCmp++;
+        _primaryCmp++;
         if (*i < *(i - 1))
         {
-          _primaryCmp++;
           tmp = *i;
           *i = *(i - 1);
           *(i - 1) = tmp;
@@ -192,12 +189,13 @@ class Sorter final
           }
           while (x < arr[j])
           {
-          j--;
-          _otherCmp++;
+            j--;
+            _otherCmp++;
           }
+
+          _primaryCmp++;
           if (i <= j)
           {
-            _primaryCmp++;
             w = arr[i];
             arr[i] = arr[j];
             arr[j] = w;
@@ -261,15 +259,16 @@ class Sorter final
         while (pos1 < split && pos2 < end) /*идет слияние, пока есть хоть один элемент в каждой серии*/
         {
           _otherCmp += 3;
+
+          _primaryCmp++;
           if (p[pos1] < p[pos2])
           {
             tmp[pos3++] = p[pos1++];
-            _primaryCmp++;
           }
           else
           {
             tmp[pos3++] = p[pos2++];
-            _primaryCmp += 2;
+            _primaryCmp++;
             if (p[pos2] < p[pos2 - 1]) break;
           }
         }
@@ -297,8 +296,8 @@ class Sorter final
     {
       for (pos1 = 0; pos1 < _N; pos1++)
       {
-      _otherCmp++;
-      tmp[pos1] = arr[pos1];
+        _otherCmp++;
+        tmp[pos1] = arr[pos1];
       }
       free(arr);
     }
@@ -314,18 +313,18 @@ class Sorter final
 
   void _printResults(std::string name)
   {
-    cout << GREEN << name << ": основных сравнений - " << _primaryCmp
-         << " вспомогательных сравнений - " << _otherCmp << " время - " << _time << " мс"
+    cout << GREEN << name << ": основных сравнений - " << _primaryCmp << " вспомогательных сравнений - " << _otherCmp
+         << " время - " << _time << " мс"
          << " объем требуемой доп памяти - " << _memory << WHITE << endl;
   }
 
  public:
-  Sorter(int N)
+  Sorter(int N, std::string filePath)
   {
     cout << "Sorter: создание массива на " << N << " элементов" << endl;
     _N = N;
     _arr = new int[_N];
-    _loadArr();
+    _loadArr(filePath);
   }
 
   void run(void)
@@ -358,7 +357,6 @@ class Sorter final
     _naturalMerge(_arr);
     _time = clock() - _start_time;
     _printResults("Сортировка естественным слиянием");
-
 
     cout << endl << endl << YELLOW << "Sorter: сортировка упорядоченного массива" << WHITE << endl;
     _clearResults();
@@ -429,25 +427,41 @@ class Menu final
            << "3. тест массива на " << N2 << " элементов" << endl
            << "4. тест массива на " << N3 << " элементов" << endl
            << "5. тест массива на " << N4 << " элементов" << endl
+           << "6. тест массива массива с 10 повторными ключами" << endl
+           << "7. тест массива массива с 100 повторными ключами" << endl
+           << "8. тест массива массива с 500 повторными ключами" << endl
+           << "9. тест массива массива с 1000 повторными ключами" << endl
            << "0. выход" << endl;
       cin >> choice;
 
       switch (choice)
       {
         case 1:
-          Sorter(10).run();
+          Sorter(10, "../test_numbers.txt").run();
           break;
         case 2:
-          Sorter(N1).run();
+          Sorter(N1, "../test_numbers.txt").run();
           break;
         case 3:
-          Sorter(N2).run();
+          Sorter(N2, "../test_numbers.txt").run();
           break;
         case 4:
-          Sorter(N3).run();
+          Sorter(N3, "../test_numbers.txt").run();
           break;
         case 5:
-          Sorter(N4).run();
+          Sorter(N4, "../test_numbers.txt").run();
+          break;
+        case 6:
+          Sorter(N4, "N410.txt").run();
+          break;
+        case 7:
+          Sorter(N4, "N4100.txt").run();
+          break;
+        case 8:
+          Sorter(N4, "N4500.txt").run();
+          break;
+        case 9:
+          Sorter(N4, "N41000.txt").run();
           break;
         case 0:
           return 1;
