@@ -35,18 +35,18 @@ class AVL
   tree _remove(tree p, int k);  // удаление ключа k из дерева p
   node* removemin(node* p);  // удаление узла с минимальным ключом из дерева p
 
-  void del_tree(tree t);
+  void delTree(tree t);
 
  public:
   AVL();
 
   void print();
 
-  bool searchKey(int key);
+  bool findKey(int key);
 
-  void insert(int k);
+  void insertKey(int k);
 
-  void remove(int k);
+  void removeKey(int k);
 
   ~AVL();
 };

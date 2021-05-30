@@ -115,22 +115,22 @@ tree AVL::_remove(tree p, int k)
   return balance(p);
 }
 
-void AVL::del_tree(tree t)
+void AVL::delTree(tree t)
 {
   if (!t) return;
-  if (t->left) del_tree(t->left);
-  if (t->right) del_tree(t->right);
+  if (t->left) delTree(t->left);
+  if (t->right) delTree(t->right);
   delete t;
 }
 
 AVL::AVL() { t = nullptr; }
 
-void AVL::remove(int k) { t = _remove(t, k); }
+void AVL::removeKey(int k) { t = _remove(t, k); }
 
-bool AVL::searchKey(int key) { return _searchKey(t, key); }
+bool AVL::findKey(int key) { return _searchKey(t, key); }
 
-void AVL::insert(int k) { t = _insert(t, k); }
+void AVL::insertKey(int k) { t = _insert(t, k); }
 
 void AVL::print() { _print(t, 10); }
 
-AVL::~AVL() { del_tree(t); }
+AVL::~AVL() { delTree(t); }
