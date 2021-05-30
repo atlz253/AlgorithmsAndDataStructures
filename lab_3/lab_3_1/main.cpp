@@ -51,21 +51,42 @@ class Sorter final
     _start_time = clock();
   }
 
-  void _reverseArr(void)
+  void _reverseArr()
   {
     cout << GREY << "Sorter: сортируем массив в обратном порядке" << WHITE << endl;
     int tmp;
+    bool sort_or_not = true;
+    _memory = sizeof(int) + sizeof(bool) + sizeof(int *);
 
-    for (int i = 0; i < _N; i++)
-      for (int *j = _arr; j != _arr + _N - 1; j++)
+    do
+    {
+      sort_or_not = true;
+      for (int *i = _arr; i != _arr + _N - 1; i++)
       {
-        if (*j < *(j + 1))
+        _otherCmp++;
+        if (*i < *(i + 1))
         {
-          tmp = *j;
-          *j = *(j + 1);
-          *(j + 1) = tmp;
+          _primaryCmp++;
+          tmp = *i;
+          *i = *(i + 1);
+          *(i + 1) = tmp;
+          sort_or_not = false;
         }
       }
+      for (int *i = _arr + _N - 1; i != _arr; i--)
+      {
+        _otherCmp++;
+        if (*i > *(i - 1))
+        {
+          _primaryCmp++;
+          tmp = *i;
+          *i = *(i - 1);
+          *(i - 1) = tmp;
+          sort_or_not = false;
+        }
+      }
+      _otherCmp++;
+    } while (sort_or_not == false);
   }
 
   void _bubbleSort(int *arr)
