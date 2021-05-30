@@ -1,95 +1,97 @@
-#include "avl.h"
+#include "avl.hpp"
 
 #include <iostream>
 
-int bfactor(tree p)  //вычисление баланса
-{
-  return (p->left ? p->left->height : 0) - (p->right ? p->right->height : 0);
-}
+int AVL::bfactor(node* p) { return (p->left ? p->left->height : 0) - (p->right ? p->right->height : 0); }
 
-node* make_node(int k)
+node* AVL::makeNode(int k)
 {
   node* n = (node*)malloc(sizeof(n));
-  if (n == NULL) return NULL;
+  if (n == nullptr) return nullptr;
   n->key = k;
-  n->left = n->right = NULL;
+  n->left = n->right = nullptr;
   n->height = 1;
   return n;
 }
 
-void fixheight(node* p)  //корректировка высоты после добавления/удаления узлов
+void AVL::fixHeight(node* p)
 {
   unsigned char hl = p->left ? p->left->height : 0;
   unsigned char hr = p->right ? p->right->height : 0;
   p->height = (hl > hr ? hl : hr) + 1;
 }
 
-node* rotateright(node* p)  // правый поворот вокруг p
+node* AVL::rotateRight(node* p)
 {
   node* q = p->left;
   p->left = q->right;
   q->right = p;
-  fixheight(p);
-  fixheight(q);
+  fixHeight(p);
+  fixHeight(q);
   return q;
 }
 
-node* rotateleft(node* q)  // левый поворот вокруг q
+node* AVL::rotateLeft(node* q)
 {
   node* p = q->right;
   q->right = p->left;
   p->left = q;
-  fixheight(q);
-  fixheight(p);
+  fixHeight(q);
+  fixHeight(p);
   return p;
 }
 
-node* balance(node* p)  // балансировка узла p
+node* AVL::balance(node* p)
 {
-  fixheight(p);
+  fixHeight(p);
   if (bfactor(p) == -2)
   {
-    if (bfactor(p->right) > 0) p->right = rotateright(p->right);
-    return rotateleft(p);
+    if (bfactor(p->right) > 0) p->right = rotateRight(p->right);
+    return rotateLeft(p);
   }
   if (bfactor(p) == 2)
   {
-    if (bfactor(p->left) < 0) p->left = rotateleft(p->left);
-    return rotateright(p);
+    if (bfactor(p->left) < 0) p->left = rotateLeft(p->left);
+    return rotateRight(p);
   }
   return p;  // балансировка не нужна
 }
 
-tree avl_insert(tree p, int k)  // вставка ключа k в дерево с корнем p
-{
-  if (!p) return make_node(k);
-  if (k == p->key) return p;
-  if (k < p->key)
-    p->left = avl_insert(p->left, k);
-  else
-    p->right = avl_insert(p->right, k);
-  return balance(p);
-}
+node* AVL::findmin(node* p) { return p->left ? findmin(p->left) : p; }
 
-node* findmin(node* p)  // поиск узла с минимальным ключом в дереве p
-{
-  return p->left ? findmin(p->left) : p;
-}
-
-node* removemin(node* p)  // удаление узла с минимальным ключом из дерева p
+node* AVL::removemin(node* p)
 {
   if (p->left == 0) return p->right;
   p->left = removemin(p->left);
   return balance(p);
 }
 
-tree avl_remove(tree p, int k)  // удаление ключа k из дерева p
+void AVL::_print(tree t, int tbl)
+{
+  if (!t) return;
+  if (t->right) _print(t->right, tbl + 5);
+  printf("%*d(%d)\n", tbl, t->key, t->height);
+  if (t->left) _print(t->left, tbl + 5);
+}
+
+tree AVL::_insert(tree p, int k)
+{
+  if (!p) return makeNode(k);
+  if (k == p->key) return p;
+  if (k < p->key)
+    p->left = _insert(p->left, k);
+  else
+    p->right = _insert(p->right, k);
+  return balance(p);
+}
+
+tree AVL::_remove(tree p, int k)
 {
   if (!p) return 0;
   if (k < p->key)
-    p->left = avl_remove(p->left, k);
+    p->left = _remove(p->left, k);
   else if (k > p->key)
-    p->right = avl_remove(p->right, k);
+    p->right = _remove(p->right, k);
   else  //  k == p->key
   {
     node* q = p->left;
@@ -104,16 +106,20 @@ tree avl_remove(tree p, int k)  // удаление ключа k из дерев
   return balance(p);
 }
 
-void print_sim_avl(tree t, int tbl)
+void AVL::del_tree(tree t)
 {
-  if (t->right) print_sim_avl(t->right, tbl + 5);
-  printf("%*d(%d)\n", tbl, t->key, t->height);
-  if (t->left) print_sim_avl(t->left, tbl + 5);
+  if (!t) return;
+  if (t->left) del_tree(t->left);
+  if (t->right) del_tree(t->right);
+  delete t;
 }
 
-void del_tree_avl(tree t)
-{
-  if (t->left) del_tree_avl(t->left);
-  if (t->right) del_tree_avl(t->right);
-  free(t);
-}
+AVL::AVL() { t = nullptr; }
+
+void AVL::remove(int k) { t = _remove(t, k); }
+
+void AVL::insert(int k) { t = _insert(t, k); }
+
+void AVL::print() { _print(t, 10); }
+
+AVL::~AVL() { del_tree(t); }
