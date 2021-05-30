@@ -15,8 +15,8 @@ class Sorter final
   int *_arr = nullptr;
   unsigned long int _time;
   unsigned long int _start_time;
-  unsigned long int _compare = 0;
-  unsigned long int _operations = 0;
+  unsigned long int _otherCmp = 0;
+  unsigned long int _primaryCmp = 0;
   unsigned long int _memory = 0;
 
   void _loadArr(void)
@@ -45,8 +45,8 @@ class Sorter final
 
   void _clearResults(void)
   {
-    _compare = 0;
-    _operations = 0;
+    _otherCmp = 0;
+    _primaryCmp = 0;
     _memory = 0;
     _start_time = clock();
   }
@@ -75,17 +75,16 @@ class Sorter final
 
     for (int i = 0; i < _N; i++)
     {
-      _compare++;
+      _otherCmp++;
       for (int *j = arr; j != arr + _N - 1; j++)
       {
-        _compare++;
+        _otherCmp++;
         if (*j > *(j + 1))
         {
-          _compare++;
+          _primaryCmp++;
           tmp = *j;
           *j = *(j + 1);
           *(j + 1) = tmp;
-          _operations += 2;
         }
       }
     }
@@ -102,31 +101,29 @@ class Sorter final
       sort_or_not = true;
       for (int *i = arr; i != arr + _N - 1; i++)
       {
-        _compare++;
+        _otherCmp++;
         if (*i > *(i + 1))
         {
-          _compare++;
+          _primaryCmp++;
           tmp = *i;
           *i = *(i + 1);
           *(i + 1) = tmp;
           sort_or_not = false;
-          _operations += 2;
         }
       }
       for (int *i = arr + _N - 1; i != arr; i--)
       {
-        _compare++;
+        _otherCmp++;
         if (*i < *(i - 1))
         {
-          _compare++;
+          _primaryCmp++;
           tmp = *i;
           *i = *(i - 1);
           *(i - 1) = tmp;
           sort_or_not = false;
-          _operations += 2;
         }
       }
-      _compare++;
+      _otherCmp++;
     } while (sort_or_not == false);
   }
 
@@ -134,14 +131,17 @@ class Sorter final
   {
     const int M = log(_N) / log(2) + 1;
     int i, j, left, right, s, x, w;
+
     struct stack
     {
       int left, right;
     } * stack;
     stack = (struct stack *)malloc(M * sizeof(struct stack));
+
     s = 0;
     stack[0].left = 0;
     stack[0].right = _N - 1;
+
     do /*выбор из стека последнего запроса*/
     {
       left = stack[s].left;
@@ -154,19 +154,30 @@ class Sorter final
         x = arr[(left + right) / 2];
         do
         {
-          while (arr[i] < x) i++;
-          while (x < arr[j]) j--;
+          while (arr[i] < x)
+          {
+            i++;
+            _otherCmp++;
+          }
+          while (x < arr[j])
+          {
+          j--;
+          _otherCmp++;
+          }
           if (i <= j)
           {
+            _primaryCmp++;
             w = arr[i];
             arr[i] = arr[j];
             arr[j] = w;
             i++;
             j--;
           }
+          _otherCmp++;
         } while (i < j);
         if (i < right && right - i >= j - left) /*если правая часть не меньше левой*/
         {                                       /*запись в стек границ правой части*/
+          _otherCmp++;
           s++;
           stack[s].left = i;
           stack[s].right = right;
@@ -174,6 +185,7 @@ class Sorter final
         }
         else if (j > left && j - left > right - i) /*если левая часть больше правой*/
         {                                          /*запись в стек границ левой части*/
+          _otherCmp++;
           s++;
           stack[s].left = left;
           stack[s].right = j;
@@ -181,7 +193,9 @@ class Sorter final
         }
         else
           left = right; /*делить больше нечего, интервал "схлопывается"*/
+        _otherCmp++;
       } while (left < right);
+      _otherCmp++;
     } while (s > -1);
     free(stack);
   }
@@ -194,18 +208,20 @@ class Sorter final
     int pos1, pos2, pos3;
     tmp = (int *)malloc(_N * sizeof(int));
     _memory = 5 * sizeof(int) + 2 * sizeof(int *) + _N * sizeof(int);
+
     do /* если есть более 1 элемента */
     {
       end = _N;
       pos2 = pos3 = 0;
+
       do
       {
         p += pos2;
         end = _N - pos3;
-        for (split = 1; split < end && p[split - 1] <= p[split]; split++) _compare += 2; /*первая серия*/
+        for (split = 1; split < end && p[split - 1] <= p[split]; split++) _otherCmp += 2; /*первая серия*/
         if (split == _N)
         {
-          _compare++;
+          _otherCmp++;
           sorted = 1;
           break;
         }
@@ -213,45 +229,46 @@ class Sorter final
         pos2 = split;
         while (pos1 < split && pos2 < end) /*идет слияние, пока есть хоть один элемент в каждой серии*/
         {
-          _compare += 3;
+          _otherCmp += 3;
           if (p[pos1] < p[pos2])
           {
             tmp[pos3++] = p[pos1++];
-            _operations++;
+            _primaryCmp++;
           }
           else
           {
             tmp[pos3++] = p[pos2++];
-            _operations++;
-            _compare++;
+            _primaryCmp += 2;
             if (p[pos2] < p[pos2 - 1]) break;
           }
         }
         /* одна последовательность закончилась - копировать остаток другой в конец буфера */
         while (pos2 < end && tmp[pos3 - 1] <= p[pos2]) /* пока вторая последовательность не пуста */
         {
-          _compare += 2;
+          _otherCmp += 2;
           tmp[pos3++] = p[pos2++];
-          _operations++;
         }
         while (pos1 < split) /* пока первая последовательность не пуста */
         {
-          _compare++;
+          _otherCmp++;
           tmp[pos3++] = p[pos1++];
-          _operations++;
         }
-        _compare++;
+        _otherCmp++;
       } while (pos3 < _N);
       if (sorted) break;
       p = tmp;
       tmp = arr;
       arr = p;
       flag = !flag;
-      _compare++;
+      _otherCmp++;
     } while (split < _N);
     if (flag)
     {
-      for (pos1 = 0; pos1 < _N; pos1++) tmp[pos1] = arr[pos1];
+      for (pos1 = 0; pos1 < _N; pos1++)
+      {
+      _otherCmp++;
+      tmp[pos1] = arr[pos1];
+      }
       free(arr);
     }
     else
@@ -264,10 +281,10 @@ class Sorter final
     cout << endl;
   }
 
-  void _printResults(void)
+  void _printResults(std::string name)
   {
-    cout << GREEN << "Пузырьковая сортировка: операций над элементами массива - " << _operations
-         << " количество сравнений - " << _compare << " время - " << _time << " мс"
+    cout << GREEN << name << ": основных сравнений - " << _primaryCmp
+         << " вспомогательных сравнений - " << _otherCmp << " время - " << _time << " мс"
          << " объем требуемой доп памяти - " << _memory << WHITE << endl;
   }
 
@@ -286,43 +303,43 @@ class Sorter final
     _clearResults();
     _bubbleSort(_arrCpy());
     _time = clock() - _start_time;
-    _printResults();
+    _printResults("Пузырьковая сортировка");
 
     _clearResults();
     _shakerSort(_arrCpy());
     _time = clock() - _start_time;
-    _printResults();
+    _printResults("Шейкерная сортировка");
 
     _clearResults();
     _quickSort(_arrCpy());
     _time = clock() - _start_time;
-    _printResults();
+    _printResults("Быстрая сортировка");
 
     _clearResults();
     _naturalMerge(_arr);
     _time = clock() - _start_time;
-    _printResults();
+    _printResults("Сортировка естественным слиянием");
 
     cout << endl << endl << YELLOW << "Sorter: сортировка упорядоченного массива" << WHITE << endl;
     _clearResults();
     _bubbleSort(_arr);
     _time = clock() - _start_time;
-    _printResults();
+    _printResults("Пузырьковая сортировка");
 
     _clearResults();
     _shakerSort(_arr);
     _time = clock() - _start_time;
-    _printResults();
+    _printResults("Шейкерная сортировка");
 
     _clearResults();
     _quickSort(_arr);
     _time = clock() - _start_time;
-    _printResults();
+    _printResults("Быстрая сортировка");
 
     _clearResults();
     _naturalMerge(_arr);
     _time = clock() - _start_time;
-    _printResults();
+    _printResults("Сортировка естественным слиянием");
 
     cout << endl << endl << YELLOW << "Sorter: сортировка массива, упорядоченного в обратном порядке" << WHITE << endl;
     _reverseArr();
@@ -330,22 +347,22 @@ class Sorter final
     _clearResults();
     _bubbleSort(_arrCpy());
     _time = clock() - _start_time;
-    _printResults();
+    _printResults("Пузырьковая сортировка");
 
     _clearResults();
     _shakerSort(_arrCpy());
     _time = clock() - _start_time;
-    _printResults();
+    _printResults("Шейкерная сортировка");
 
     _clearResults();
     _quickSort(_arrCpy());
     _time = clock() - _start_time;
-    _printResults();
+    _printResults("Быстрая сортировка");
 
     _clearResults();
     _naturalMerge(_arr);
     _time = clock() - _start_time;
-    _printResults();
+    _printResults("Сортировка естественным слиянием");
   }
 
   ~Sorter() { delete _arr; }
