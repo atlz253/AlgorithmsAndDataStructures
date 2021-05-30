@@ -3,6 +3,13 @@
 #include <fstream>
 #include <iostream>
 
+#define N1 10000
+#define N2 50000
+#define N3 100000
+#define N4 150000
+
+
+
 const std::string WHITE = "\033[0;37m", RED = "\033[0;31m", GREEN = "\033[0;32m", YELLOW = "\033[0;33m",
                   GREY = "\033[0;90m";
 
@@ -417,10 +424,10 @@ class Menu final
     while (true)
     {
       cout << "1. тест массива на 10 элементов" << endl
-           << "2. тест массива на 10000 элементов" << endl
-           << "3. тест массива на 50000 элементов" << endl
-           << "4. тест массива на 100000 элементов" << endl
-           << "5. тест массива на 150000 элементов" << endl
+           << "2. тест массива на " << N1 << " элементов" << endl
+           << "3. тест массива на " << N2 << " элементов" << endl
+           << "4. тест массива на " << N3 << " элементов" << endl
+           << "5. тест массива на " << N4 << " элементов" << endl
            << "0. выход" << endl;
       cin >> choice;
 
@@ -430,16 +437,16 @@ class Menu final
           Sorter(10).run();
           break;
         case 2:
-          Sorter(10000).run();
+          Sorter(N1).run();
           break;
         case 3:
-          Sorter(50000).run();
+          Sorter(N2).run();
           break;
         case 4:
-          Sorter(100000).run();
+          Sorter(N3).run();
           break;
         case 5:
-          Sorter(150000).run();
+          Sorter(N4).run();
           break;
         case 0:
           return 1;
