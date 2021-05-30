@@ -1,18 +1,90 @@
+#include <fstream>
 #include <iostream>
 
 #include "avl.hpp"
+#include "splay.hpp"
 
 using namespace std;
 
-int main()
+class Menu
 {
-  AVL avl;
-  int mas[15]={14, 8, 1, 13, 7, 12, 6, 2, 9, 0, 11, 10, 4, 3, 5}, i;
+ private:
+  AVL *_avlTree;
+  Splay *_splayTree;
+  bool _isFilled;
 
-  for (i = 0; i < 15; i++)
-    avl.insert(mas[i]);
+  void _fill(void)
+  {
+    int tmp;
+    ifstream f;
+    f.open("../test_numbers.txt", ios_base::in);
 
-  avl.print();
+    while (!f.eof())
+    {
+      f >> tmp;
+      _avlTree->insertKey(tmp);
+      _splayTree->insertKey(tmp);
+    }
 
-  return 0;
-}
+    _isFilled = true;
+    f.close();
+  }
+
+ public:
+  Menu()
+  {
+    _isFilled = false;
+    _avlTree = new AVL();
+    _splayTree = new Splay();
+  }
+
+  int run()
+  {
+    int choice;
+
+    while (true)
+    {
+      cout << "1. заполнить деревья ключами из файла" << endl
+           << "2. добавить случайные ключи" << endl
+           << "3. поиск 100 ключей" << endl
+           << "0. выход из программы" << endl;
+
+      cin >> choice;
+
+      switch (choice)
+      {
+        case 1:
+          if (!_isFilled)
+          {
+            _fill();
+          }
+          else
+          {
+            cout << "Деревья уже заполнены ключами из файла!" << endl;
+            cin.get();
+          }
+          break;
+        case 2:
+
+          break;
+        case 3:
+
+          break;
+        case 0:
+          return 0;
+        default:
+          cout << "Ошибка ввода!" << endl;
+          cin.get();
+          break;
+      }
+    }
+  }
+
+  ~Menu()
+  {
+    delete _avlTree;
+    delete _splayTree;
+  }
+};
+
+int main() { return Menu().run(); }
