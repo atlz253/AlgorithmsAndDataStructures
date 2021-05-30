@@ -66,11 +66,11 @@ node* AVL::removemin(node* p)
   return balance(p);
 }
 
-bool AVL::_searchKey(node* p, int key)
+node *AVL::_searchKey(node* p, int key)
 {
-  if (p == nullptr) return false;
+  if (p == nullptr) return nullptr;
   int k = p->key;
-  if (k == key) return true;
+  if (k == key) return p;
   if (k > key) return _searchKey(p->left, key);
   if (k < key) return _searchKey(p->right, key);
 }
