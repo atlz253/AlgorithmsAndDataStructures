@@ -16,7 +16,7 @@ DISTFILES += \
   graph4 \
   graph4.graphml
 
-QMAKE_POST_LINK += cp -f ../../lab_2/graph $$OUT_PWD/ $$escape_expand(\\n\\t)
-QMAKE_POST_LINK += cp -f ../../lab_2/graph2 $$OUT_PWD/ $$escape_expand(\\n\\t)
-QMAKE_POST_LINK += cp -f ../../lab_2/graph3 $$OUT_PWD/ $$escape_expand(\\n\\t)
-QMAKE_POST_LINK += cp -f ../../lab_2/graph4 $$OUT_PWD/ $$escape_expand(\\n\\t)
+QMAKE_POST_LINK += cp -f $$PWD/graph $$OUT_PWD/ $$escape_expand(\\n\\t)
+QMAKE_POST_LINK += cp -f $$PWD/graph2 $$OUT_PWD/ $$escape_expand(\\n\\t)
+QMAKE_POST_LINK += cp -f $$PWD/graph3 $$OUT_PWD/ $$escape_expand(\\n\\t)
+QMAKE_POST_LINK += cp -f $$PWD/graph4 $$OUT_PWD/ $$escape_expand(\\n\\t)

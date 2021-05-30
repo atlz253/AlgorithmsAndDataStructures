@@ -9,4 +9,4 @@ SOURCES += \
 DISTFILES += \
   base.bin
 
-QMAKE_POST_LINK += cp -f ../../../lab_1/lab_1_1/base.bin $$OUT_PWD/ $$escape_expand(\\n\\t)
+QMAKE_POST_LINK += cp -f $$PWD/base.bin $$OUT_PWD/ $$escape_expand(\\n\\t)
