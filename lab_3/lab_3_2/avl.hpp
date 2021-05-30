@@ -23,7 +23,7 @@ class AVL
   void fixHeight(node* p);  //корректировка высоты после добавления/удаления узлов
 
   node* findmin(node* p);    // поиск узла с минимальным ключом в дереве p
-  node* removemin(node* p);  // удаление узла с минимальным ключом из дерева p
+  bool _searchKey(node* p, int key);
 
   node* rotateLeft(node* q);   // левый поворот вокруг q
   node* rotateRight(node* p);  // правый поворот вокруг p
@@ -31,15 +31,21 @@ class AVL
   void _print(tree t, int tbl);
 
   tree _insert(tree p, int k);  // вставка ключа k в дерево с корнем p
+
   tree _remove(tree p, int k);  // удаление ключа k из дерева p
+  node* removemin(node* p);  // удаление узла с минимальным ключом из дерева p
 
   void del_tree(tree t);
+
  public:
   AVL();
 
   void print();
 
+  bool searchKey(int key);
+
   void insert(int k);
+
   void remove(int k);
 
   ~AVL();

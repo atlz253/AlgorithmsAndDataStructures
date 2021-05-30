@@ -66,6 +66,15 @@ node* AVL::removemin(node* p)
   return balance(p);
 }
 
+bool AVL::_searchKey(node* p, int key)
+{
+  if (p == nullptr) return false;
+  int k = p->key;
+  if (k == key) return true;
+  if (k > key) return _searchKey(p->left, key);
+  if (k < key) return _searchKey(p->right, key);
+}
+
 void AVL::_print(tree t, int tbl)
 {
   if (!t) return;
@@ -117,6 +126,8 @@ void AVL::del_tree(tree t)
 AVL::AVL() { t = nullptr; }
 
 void AVL::remove(int k) { t = _remove(t, k); }
+
+bool AVL::searchKey(int key) { return _searchKey(t, key); }
 
 void AVL::insert(int k) { t = _insert(t, k); }
 
