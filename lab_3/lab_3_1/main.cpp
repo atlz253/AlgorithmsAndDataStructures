@@ -163,6 +163,8 @@ class Sorter final
     stack[0].left = 0;
     stack[0].right = _N - 1;
 
+    _memory = sizeof(const int) + 7 * sizeof(int) + M * sizeof(struct stack);
+
     do /*выбор из стека последнего запроса*/
     {
       left = stack[s].left;
