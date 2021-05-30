@@ -1,4 +1,5 @@
 #include <ctime>
+#include <cmath>
 #include <fstream>
 #include <iostream>
 
@@ -126,56 +127,60 @@ class Sorter final
     } while (sort_or_not == false);
   }
 
-  void _quickSort(int *arr, int left, int right)
+  void _quickSort(int *arr)
   {
-    int pivot;
-    int l_hold = left;
-    int r_hold = right;
-    _memory += 3 * sizeof(int);
-    pivot = arr[left];
-
-    while (left < right)
+    const int M = log(_N) / log(2) + 1;
+    int i, j, left, right, s, x, w;
+    struct stack
     {
-      _compare++;
-      while ((arr[right] >= pivot) && (left < right))
-      {
-        _compare += 2;
-        right--;
-      }
-      if (left != right)
-      {
-        _compare++;
-        arr[left] = arr[right];
-        _operations++;
-        left++;
-      }
-      while ((arr[left] <= pivot) && (left < right))
-      {
-        _compare += 2;
-        left++;
-      }
-      if (left != right)
-      {
-        _compare++;
-        arr[right] = arr[left];
-        _operations++;
-        right--;
-      }
-    }
-    arr[left] = pivot;
-    pivot = left;
-    left = l_hold;
-    right = r_hold;
-    if (left < pivot)
+      int left, right;
+    } * stack;
+    stack = (struct stack *)malloc(M * sizeof(struct stack));
+    s = 0;
+    stack[0].left = 0;
+    stack[0].right = _N - 1;
+    do /*выбор из стека последнего запроса*/
     {
-      _compare++;
-      _quickSort(arr, left, pivot - 1);
-    }
-    if (right > pivot)
-    {
-      _compare++;
-      _quickSort(arr, pivot + 1, right);
-    }
+      left = stack[s].left;
+      right = stack[s].right;
+      s--;
+      do /*разделение а[left]… a[right]*/
+      {
+        i = left;
+        j = right;
+        x = arr[(left + right) / 2];
+        do
+        {
+          while (arr[i] < x) i++;
+          while (x < arr[j]) j--;
+          if (i <= j)
+          {
+            w = arr[i];
+            arr[i] = arr[j];
+            arr[j] = w;
+            i++;
+            j--;
+          }
+        } while (i < j);
+        if (i < right && right - i >= j - left) /*если правая часть не меньше левой*/
+        {                                       /*запись в стек границ правой части*/
+          s++;
+          stack[s].left = i;
+          stack[s].right = right;
+          right = j; /*теперь left и right ограничивают левую часть*/
+        }
+        else if (j > left && j - left > right - i) /*если левая часть больше правой*/
+        {                                          /*запись в стек границ левой части*/
+          s++;
+          stack[s].left = left;
+          stack[s].right = j;
+          left = i; /*теперь left и right ограничивают правую часть*/
+        }
+        else
+          left = right; /*делить больше нечего, интервал "схлопывается"*/
+      } while (left < right);
+    } while (s > -1);
+    free(stack);
   }
 
   void _naturalMerge(int *arr)
@@ -283,7 +288,7 @@ class Sorter final
          << " объем требуемой доп памяти - " << _memory << endl;
 
     _clearResults();
-    _quickSort(_arrCpy(), 0, _N - 1);
+    _quickSort(_arrCpy());
     _time = clock() - _start_time;
     cout << "Быстрая сортировка: операций над элементами массива - " << _operations << " количество сравнений - "
          << _compare << " время - " << _time << " мс"
@@ -312,7 +317,7 @@ class Sorter final
          << " объем требуемой доп памяти - " << _memory << endl;
 
     _clearResults();
-    _quickSort(_arr, 0, _N - 1);
+    _quickSort(_arr);
     _time = clock() - _start_time;
     cout << "Быстрая сортировка: операций над элементами массива - " << _operations << " количество сравнений - "
          << _compare << " время - " << _time << " мс"
@@ -343,7 +348,7 @@ class Sorter final
          << " объем требуемой доп памяти - " << _memory << endl;
 
     _clearResults();
-    _quickSort(_arrCpy(), 0, _N - 1);
+    _quickSort(_arrCpy());
     _time = clock() - _start_time;
     cout << "Быстрая сортировка: операций над элементами массива - " << _operations << " количество сравнений - "
          << _compare << " время - " << _time << " мс"
