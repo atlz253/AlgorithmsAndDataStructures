@@ -320,26 +320,35 @@ class Sorter final
 
   void run(void)
   {
+    int *tmp;
+
     cout << endl << endl << YELLOW << "Sorter: сортировка неупорядоченного массива" << WHITE << endl;
+    tmp = _arrCpy();
     _clearResults();
-    _bubbleSort(_arrCpy());
+    _bubbleSort(tmp);
     _time = clock() - _start_time;
     _printResults("Пузырьковая сортировка");
+    delete tmp;
 
+    tmp = _arrCpy();
     _clearResults();
-    _shakerSort(_arrCpy());
+    _shakerSort(tmp);
     _time = clock() - _start_time;
     _printResults("Шейкерная сортировка");
+    delete tmp;
 
+    tmp = _arrCpy();
     _clearResults();
-    _quickSort(_arrCpy());
+    _quickSort(tmp);
     _time = clock() - _start_time;
     _printResults("Быстрая сортировка");
+    delete tmp;
 
     _clearResults();
     _naturalMerge(_arr);
     _time = clock() - _start_time;
     _printResults("Сортировка естественным слиянием");
+
 
     cout << endl << endl << YELLOW << "Sorter: сортировка упорядоченного массива" << WHITE << endl;
     _clearResults();
@@ -365,20 +374,26 @@ class Sorter final
     cout << endl << endl << YELLOW << "Sorter: сортировка массива, упорядоченного в обратном порядке" << WHITE << endl;
     _reverseArr();
 
+    tmp = _arrCpy();
     _clearResults();
-    _bubbleSort(_arrCpy());
+    _bubbleSort(tmp);
     _time = clock() - _start_time;
     _printResults("Пузырьковая сортировка");
+    delete tmp;
 
+    tmp = _arrCpy();
     _clearResults();
-    _shakerSort(_arrCpy());
+    _shakerSort(tmp);
     _time = clock() - _start_time;
     _printResults("Шейкерная сортировка");
+    delete tmp;
 
+    tmp = _arrCpy();
     _clearResults();
-    _quickSort(_arrCpy());
+    _quickSort(tmp);
     _time = clock() - _start_time;
     _printResults("Быстрая сортировка");
+    delete tmp;
 
     _clearResults();
     _naturalMerge(_arr);
