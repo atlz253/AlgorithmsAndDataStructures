@@ -42,7 +42,7 @@ class AVL
 
   void print();
 
-  bool findKey(int key);
+  node* findKey(int key);
 
   void insertKey(int k);
 

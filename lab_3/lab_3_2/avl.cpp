@@ -71,8 +71,9 @@ node *AVL::_searchKey(node* p, int key)
   if (p == nullptr) return nullptr;
   int k = p->key;
   if (k == key) return p;
-  if (k > key) return _searchKey(p->left, key);
-  if (k < key) return _searchKey(p->right, key);
+  else if (k > key) return _searchKey(p->left, key);
+  else if (k < key) return _searchKey(p->right, key);
+  return nullptr;
 }
 
 void AVL::_print(tree t, int tbl)
@@ -127,7 +128,7 @@ AVL::AVL() { t = nullptr; }
 
 void AVL::removeKey(int k) { t = _remove(t, k); }
 
-bool AVL::findKey(int key) { return _searchKey(t, key); }
+node* AVL::findKey(int key) { return _searchKey(t, key); }
 
 void AVL::insertKey(int k) { t = _insert(t, k); }
 
