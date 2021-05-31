@@ -96,24 +96,17 @@ class Sorter final
 
   void _bubbleSort(int *arr)
   {
-    int tmp;
-    _memory = 3 * sizeof(int);
+    int i, j, x;
+    _memory = sizeof(int) * 3;
 
-    for (int i = 0; i < _N; i++)
-    {
-      _otherCmp++;
-      for (int *j = arr; j != arr + _N - 1; j++)
-      {
-        _otherCmp++;
-        _primaryCmp++;
-        if (*j > *(j + 1))
+    for (i = 1, _otherCmp++; i < _N; i++, _otherCmp++)
+      for (j = _N - 1, _otherCmp++; j >= i; j--, _otherCmp++)
+        if (++_primaryCmp && arr[j - 1] > arr[j])
         {
-          tmp = *j;
-          *j = *(j + 1);
-          *(j + 1) = tmp;
+          x = arr[j - 1];
+          arr[j - 1] = arr[j];
+          arr[j] = x;
         }
-      }
-    }
   }
 
   void _shakerSort(int *arr)
