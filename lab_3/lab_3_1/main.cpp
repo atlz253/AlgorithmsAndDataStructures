@@ -167,19 +167,10 @@ class Sorter final
         x = arr[(left + right) / 2];
         do
         {
-          while (arr[i] < x)
-          {
-            i++;
-            _otherCmp++;
-          }
-          while (x < arr[j])
-          {
-            j--;
-            _otherCmp++;
-          }
+          while (++_primaryCmp && arr[i] < x) i++;
+          while (++_primaryCmp && x < arr[j]) j--;
 
-          _primaryCmp++;
-          if (i <= j)
+          if (++_otherCmp && i <= j)
           {
             w = arr[i];
             arr[i] = arr[j];
@@ -187,19 +178,18 @@ class Sorter final
             i++;
             j--;
           }
-          _otherCmp++;
-        } while (i < j);
-        if (i < right && right - i >= j - left) /*если правая часть не меньше левой*/
-        {                                       /*запись в стек границ правой части*/
-          _otherCmp++;
+
+        } while (++_otherCmp && i < j);
+
+        if (++_otherCmp && i < right && ++_otherCmp && right - i >= j - left) /*если правая часть не меньше левой*/
+        { /*запись в стек границ правой части*/
           s++;
           stack[s].left = i;
           stack[s].right = right;
           right = j; /*теперь left и right ограничивают левую часть*/
         }
-        else if (j > left && j - left > right - i) /*если левая часть больше правой*/
-        {                                          /*запись в стек границ левой части*/
-          _otherCmp++;
+        else if (++_otherCmp && j > left && ++_otherCmp && j - left > right - i) /*если левая часть больше правой*/
+        { /*запись в стек границ левой части*/
           s++;
           stack[s].left = left;
           stack[s].right = j;
@@ -207,10 +197,8 @@ class Sorter final
         }
         else
           left = right; /*делить больше нечего, интервал "схлопывается"*/
-        _otherCmp++;
-      } while (left < right);
-      _otherCmp++;
-    } while (s > -1);
+      } while (++_otherCmp && left < right);
+    } while (++_otherCmp && s > -1);
     free(stack);
   }
 
