@@ -6,7 +6,7 @@ int AVL::bfactor(node* p) { return (p->left ? p->left->height : 0) - (p->right ?
 
 node* AVL::makeNode(int k)
 {
-  node* n = (node*)malloc(sizeof(n));
+  node* n = new node;
   if (n == nullptr) return nullptr;
   n->key = k;
   n->left = n->right = nullptr;

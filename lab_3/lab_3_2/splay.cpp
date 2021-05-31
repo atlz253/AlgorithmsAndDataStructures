@@ -4,7 +4,7 @@
 
 Node* Splay::makeNode(Node* parent, int key)
 {
-  Node* node = (Node*)malloc(sizeof(Node));
+  Node* node = new Node;
   node->left = node->right = NULL;
   node->parent = parent;
   node->key = key;
@@ -216,7 +216,7 @@ Splay::Splay()
 {
   totalCompares = 0;
   comparesCount = 0;
-  t = (SplayTree*)malloc(sizeof(SplayTree));
+  t = new SplayTree;
   memory = sizeof(SplayTree);
   t->root = nullptr;
 }
