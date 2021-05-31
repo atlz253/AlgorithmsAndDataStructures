@@ -16,6 +16,7 @@ class AVL
  private:
   tree t;
 
+  unsigned long int memory;
   unsigned long int curCompares;
   unsigned long int comparesCount;
   unsigned long int totalCompares;
@@ -52,6 +53,7 @@ class AVL
 
   void removeKey(int k);
 
+  unsigned long int getUsedMemory(void);
   unsigned long int getCurCompares(void);
   unsigned long int getAverageCompares(void);
 

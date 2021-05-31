@@ -66,7 +66,9 @@ class Menu
 
     while (true)
     {
-      cout << "1. поиск 100 ключей" << endl << "0. выход из программы" << endl;
+      cout << "1. поиск 100 ключей" << endl
+           << "2. количество используемой памяти" << endl
+           << "0. выход из программы" << endl;
 
       cin >> choice;
 
@@ -74,6 +76,9 @@ class Menu
       {
         case 1:
           _keysFind();
+          break;
+        case 2:
+          cout << "АВЛ: " << _avlTree->getUsedMemory() << endl << "Splay: " << _splayTree->getUsedMemory() << endl;
           break;
         case 0:
           return 0;

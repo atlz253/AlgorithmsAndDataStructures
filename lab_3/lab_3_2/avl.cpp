@@ -129,12 +129,17 @@ void AVL::delTree(tree t)
 
 AVL::AVL()
 {
+  memory = 0;
   totalCompares = 0;
   comparesCount = 0;
   t = nullptr;
 }
 
-void AVL::removeKey(int k) { t = _remove(t, k); }
+void AVL::removeKey(int k)
+{
+  memory -= sizeof(node);
+  t = _remove(t, k);
+}
 
 node* AVL::findKey(int key)
 {
@@ -145,9 +150,15 @@ node* AVL::findKey(int key)
   return result;
 }
 
-void AVL::insertKey(int k) { t = _insert(t, k); }
+void AVL::insertKey(int k)
+{
+  memory += sizeof(node);
+  t = _insert(t, k);
+}
 
 void AVL::print() { _print(t, 10); }
+
+unsigned long int AVL::getUsedMemory(void) { return memory; }
 
 unsigned long int AVL::getCurCompares(void) { return curCompares; }
 

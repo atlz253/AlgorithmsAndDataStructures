@@ -217,6 +217,7 @@ Splay::Splay()
   totalCompares = 0;
   comparesCount = 0;
   t = (SplayTree*)malloc(sizeof(SplayTree));
+  memory = sizeof(SplayTree);
   t->root = nullptr;
 }
 
@@ -224,6 +225,7 @@ void Splay::print() { _print(t->root, 10); }
 
 Node* Splay::insertKey(int key)
 {
+  memory += sizeof(Node);
   if (!t->root) t->root = makeNode(NULL, key);
   return splay(&t->root, addNode(t->root, key));
 }
@@ -243,6 +245,7 @@ Node* Splay::findKey(int key)
 
 int Splay::removeKey(int key)
 {
+  memory -= sizeof(Node);
   Node* prev = NULL;
   Node* res = findNode(t->root, &prev, key);
 
@@ -252,6 +255,8 @@ int Splay::removeKey(int key)
     splay(&t->root, prev);
   return res ? 1 : 0;
 }
+
+unsigned long int Splay::getUsedMemory(void) { return memory; }
 
 unsigned long int Splay::getCurCompares(void) { return curCompares; }
 
