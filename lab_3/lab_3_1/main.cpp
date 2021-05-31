@@ -111,39 +111,31 @@ class Sorter final
 
   void _shakerSort(int *arr)
   {
-    int tmp;
-    bool sort_or_not = true;
-    _memory = sizeof(int) + sizeof(bool) + sizeof(int *);
+    int j, k = _N - 1, left = 1, right = _N - 1, x;
+    _memory = sizeof(int) * 5;
 
     do
     {
-      sort_or_not = true;
-      for (int *i = arr; i != arr + _N - 1; i++)
-      {
-        _otherCmp++;
-        _primaryCmp++;
-        if (*i > *(i + 1))
+      for (j = right, _otherCmp++; j >= left; j--, _otherCmp++) /*сначала просматриваем справа налево*/
+        if (++_primaryCmp && arr[j - 1] > arr[j])
         {
-          tmp = *i;
-          *i = *(i + 1);
-          *(i + 1) = tmp;
-          sort_or_not = false;
+          x = arr[j - 1];
+          arr[j - 1] = arr[j];
+          arr[j] = x;
+          k = j;
         }
-      }
-      for (int *i = arr + _N - 1; i != arr; i--)
-      {
-        _otherCmp++;
-        _primaryCmp++;
-        if (*i < *(i - 1))
+      left = k + 1;
+
+      for (j = left, _otherCmp++; j <= right; j++, _otherCmp++) /*а теперь просматриваем слева направо*/
+        if (++_primaryCmp && arr[j - 1] > arr[j])
         {
-          tmp = *i;
-          *i = *(i - 1);
-          *(i - 1) = tmp;
-          sort_or_not = false;
+          x = arr[j - 1];
+          arr[j - 1] = arr[j];
+          arr[j] = x;
+          k = j;
         }
-      }
-      _otherCmp++;
-    } while (sort_or_not == false);
+      right = k - 1;
+    } while (++_otherCmp && left < right); /*и так до тех пор, пока есть что просматривать*/
   }
 
   void _quickSort(int *arr)
