@@ -66,13 +66,16 @@ node* AVL::removemin(node* p)
   return balance(p);
 }
 
-node *AVL::_searchKey(node* p, int key)
+node* AVL::_searchKey(node* p, int key)
 {
   if (p == nullptr) return nullptr;
   int k = p->key;
-  if (k == key) return p;
-  else if (k > key) return _searchKey(p->left, key);
-  else if (k < key) return _searchKey(p->right, key);
+  if (++curCompares && k == key)
+    return p;
+  else if (++curCompares && k > key)
+    return _searchKey(p->left, key);
+  else if (++curCompares && k < key)
+    return _searchKey(p->right, key);
   return nullptr;
 }
 
@@ -124,14 +127,30 @@ void AVL::delTree(tree t)
   delete t;
 }
 
-AVL::AVL() { t = nullptr; }
+AVL::AVL()
+{
+  totalCompares = 0;
+  comparesCount = 0;
+  t = nullptr;
+}
 
 void AVL::removeKey(int k) { t = _remove(t, k); }
 
-node* AVL::findKey(int key) { return _searchKey(t, key); }
+node* AVL::findKey(int key)
+{
+  curCompares = 0;
+  comparesCount++;
+  node* result = _searchKey(t, key);
+  totalCompares += curCompares;
+  return result;
+}
 
 void AVL::insertKey(int k) { t = _insert(t, k); }
 
 void AVL::print() { _print(t, 10); }
+
+unsigned long int AVL::getCurCompares(void) { return curCompares; }
+
+unsigned long int AVL::getAverageCompares(void) { return totalCompares / comparesCount; }
 
 AVL::~AVL() { delTree(t); }

@@ -16,6 +16,10 @@ class AVL
  private:
   tree t;
 
+  unsigned long int curCompares;
+  unsigned long int comparesCount;
+  unsigned long int totalCompares;
+
   node* makeNode(int k);
   node* balance(node* p);  // балансировка узла p
 
@@ -47,6 +51,9 @@ class AVL
   void insertKey(int k);
 
   void removeKey(int k);
+
+  unsigned long int getCurCompares(void);
+  unsigned long int getAverageCompares(void);
 
   ~AVL();
 };

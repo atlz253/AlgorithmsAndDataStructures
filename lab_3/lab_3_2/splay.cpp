@@ -46,11 +46,12 @@ Node* Splay::findNode(Node* cur, Node** prev, int key)
 {
   while (cur)
   {
-    if (cur->key == key)
+    if (++curCompares && cur->key == key)
       return cur;
     else
     {
       *prev = cur;
+      curCompares++;
       cur = (cur->key > key ? cur->left : cur->right);
     }
   }
@@ -213,6 +214,8 @@ void Splay::delTree(Node* node)
 
 Splay::Splay()
 {
+  totalCompares = 0;
+  comparesCount = 0;
   t = (SplayTree*)malloc(sizeof(SplayTree));
   t->root = nullptr;
 }
@@ -227,8 +230,11 @@ Node* Splay::insertKey(int key)
 
 Node* Splay::findKey(int key)
 {
+  curCompares = 0;
+  comparesCount++;
   Node* prev = NULL;
   Node* res = findNode(t->root, &prev, key);
+  totalCompares += curCompares;
 
   if (res) return splay(&t->root, res);
   if (prev) splay(&t->root, prev);
@@ -246,5 +252,9 @@ int Splay::removeKey(int key)
     splay(&t->root, prev);
   return res ? 1 : 0;
 }
+
+unsigned long int Splay::getCurCompares(void) { return curCompares; }
+
+unsigned long int Splay::getAverageCompares(void) { return totalCompares / comparesCount; }
 
 Splay::~Splay() { delTree(t->root); }

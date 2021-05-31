@@ -19,6 +19,10 @@ class Splay
  private:
   SplayTree* t;
 
+  unsigned long int curCompares;
+  unsigned long int comparesCount;
+  unsigned long int totalCompares;
+
   Node* makeNode(Node* parent, int key);
   Node* addNode(Node* cur, int key);
 
@@ -48,6 +52,9 @@ class Splay
   Node* findKey(int key);
   int removeKey(int key);
   Node* insertKey(int key);
+
+  unsigned long int getCurCompares(void);
+  unsigned long int getAverageCompares(void);
 
   ~Splay();
 };

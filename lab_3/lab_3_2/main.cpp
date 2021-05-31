@@ -40,10 +40,14 @@ class Menu
 
       _splayTree->findKey(cur);
       if (_avlTree->findKey(cur))
-        cout << "ключ " << cur << " найден" << endl;
+        cout << "Ключ " << cur << " найден. ";
       else
-        cout << "ключ " << cur << " не найден" << endl;
+        cout << "Ключ " << cur << " не найден. ";
+      cout << "Количество сравнений в АВЛ - " << _avlTree->getCurCompares() << " количество сравнений в Splay - "
+           << _splayTree->getCurCompares() << endl;
     }
+    cout << "Среднее кол-во сравнений в АВЛ - " << _avlTree->getAverageCompares()
+         << " среднее кол-во сравнений в Splay - " << _splayTree->getAverageCompares() << endl;
 
     f.close();
   }
@@ -62,8 +66,7 @@ class Menu
 
     while (true)
     {
-      cout << "1. поиск 100 ключей" << endl
-           << "0. выход из программы" << endl;
+      cout << "1. поиск 100 ключей" << endl << "0. выход из программы" << endl;
 
       cin >> choice;
 
