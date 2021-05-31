@@ -11,7 +11,6 @@ class Menu
  private:
   AVL *_avlTree;
   Splay *_splayTree;
-  bool _isFilled;
 
   void _fill(void)
   {
@@ -26,16 +25,35 @@ class Menu
       _splayTree->insertKey(tmp);
     }
 
-    _isFilled = true;
+    f.close();
+  }
+
+  void _keysFind(void)
+  {
+    int cur;
+    ifstream f;
+    f.open("testKeys.txt", ios_base::in);
+
+    for (size_t i = 0; i < 100; i++)
+    {
+      f >> cur;
+
+      _splayTree->findKey(cur);
+      if (_avlTree->findKey(cur))
+        cout << "ключ " << cur << " найден" << endl;
+      else
+        cout << "ключ " << cur << " не найден" << endl;
+    }
+
     f.close();
   }
 
  public:
   Menu()
   {
-    _isFilled = false;
     _avlTree = new AVL();
     _splayTree = new Splay();
+    _fill();
   }
 
   int run()
@@ -44,9 +62,7 @@ class Menu
 
     while (true)
     {
-      cout << "1. заполнить деревья ключами из файла" << endl
-           << "2. добавить случайные ключи" << endl
-           << "3. поиск 100 ключей" << endl
+      cout << "1. поиск 100 ключей" << endl
            << "0. выход из программы" << endl;
 
       cin >> choice;
@@ -54,21 +70,7 @@ class Menu
       switch (choice)
       {
         case 1:
-          if (!_isFilled)
-          {
-            _fill();
-          }
-          else
-          {
-            cout << "Деревья уже заполнены ключами из файла!" << endl;
-            cin.get();
-          }
-          break;
-        case 2:
-
-          break;
-        case 3:
-
+          _keysFind();
           break;
         case 0:
           return 0;
