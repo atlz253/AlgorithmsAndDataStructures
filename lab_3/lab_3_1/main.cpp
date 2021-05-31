@@ -220,56 +220,46 @@ class Sorter final
       {
         p += pos2;
         end = _N - pos3;
-        for (split = 1; split < end && p[split - 1] <= p[split]; split++) _otherCmp += 2; /*первая серия*/
-        if (split == _N)
+        for (split = 1, _otherCmp++, _primaryCmp++; split < end && p[split - 1] <= p[split]; split++, _otherCmp++, _primaryCmp++)
+          ; /*первая серия*/
+        if (++_otherCmp && split == _N)
         {
-          _otherCmp++;
           sorted = 1;
           break;
         }
         pos1 = 0;
         pos2 = split;
-        while (pos1 < split && pos2 < end) /*идет слияние, пока есть хоть один элемент в каждой серии*/
+        while (++_otherCmp && pos1 < split && ++_otherCmp &&
+               pos2 < end) /*идет слияние, пока есть хоть один элемент в каждой серии*/
         {
-          _otherCmp += 3;
-
-          _primaryCmp++;
-          if (p[pos1] < p[pos2])
+          if (++_primaryCmp && p[pos1] < p[pos2])
           {
             tmp[pos3++] = p[pos1++];
           }
           else
           {
             tmp[pos3++] = p[pos2++];
-            _primaryCmp++;
-            if (p[pos2] < p[pos2 - 1]) break;
+            if (++_primaryCmp && p[pos2] < p[pos2 - 1]) break;
           }
         }
         /* одна последовательность закончилась - копировать остаток другой в конец буфера */
-        while (pos2 < end && tmp[pos3 - 1] <= p[pos2]) /* пока вторая последовательность не пуста */
-        {
-          _otherCmp += 2;
+        while (++_otherCmp && pos2 < end && ++_primaryCmp &&
+               tmp[pos3 - 1] <= p[pos2]) /* пока вторая последовательность не пуста */
           tmp[pos3++] = p[pos2++];
-        }
-        while (pos1 < split) /* пока первая последовательность не пуста */
-        {
-          _otherCmp++;
+        while (++_otherCmp && pos1 < split) /* пока первая последовательность не пуста */
           tmp[pos3++] = p[pos1++];
-        }
-        _otherCmp++;
-      } while (pos3 < _N);
+      } while (++_otherCmp && pos3 < _N);
       if (sorted) break;
       p = tmp;
       tmp = arr;
       arr = p;
       flag = !flag;
-      _otherCmp++;
-    } while (split < _N);
+    } while (++_otherCmp && split < _N);
+
     if (flag)
     {
-      for (pos1 = 0; pos1 < _N; pos1++)
+      for (pos1 = 0, _otherCmp++; pos1 < _N; pos1++, _otherCmp++)
       {
-        _otherCmp++;
         tmp[pos1] = arr[pos1];
       }
       free(arr);
