@@ -169,102 +169,104 @@ class ListDeque : public Deque
 class VectorDeque : public Deque
 {
  private:
+  int _size = 0;
+
+  int *_head = nullptr;
+
   int *_first = nullptr;
   int *_last = nullptr;
-  int _size = 0;
 
  public:
   VectorDeque(const int size)
   {
     _size = size;
-    _first = new int[size];
+    _head = new int[size];
   }
 
   bool addStart(const int a) override
   {
-    if (_isNatural(a) && _last != _first + _size - 1)
-    {
-      if (_last)
-      {
-        _last++;
-        int *p = _last;
-        while (p != _first)
-        {
-          p--;
-          *(p + 1) = *p;
-        }
-        *_first = a;
-      }
-      else
-      {
-        *_first = a;
-        _last = _first;
-      }
-      return true;
-    }
-    else
+    bool dequeIsFull = _first && ((_first == _head && _last == _head + _size - 1) ||
+                                  (_first != _head && _first == _last - 1) || (_first == _last + 1 && _last == _head));
+
+    if (!_isNatural(a))
     {
       return false;
     }
+    else if (!_first)
+    {
+      _first = _last = _head;
+      *_first = a;
+      return true;
+    }
+    else if (!dequeIsFull && _head == _first)
+    {
+      _first = _head + _size - 1;
+      *_first = a;
+      return true;
+    }
+    else if (!dequeIsFull)
+    {
+      _first--;
+      *_first = a;
+      return true;
+    }
+    return false;
   }
 
   bool addEnd(const int a) override
   {
-    if (_isNatural(a) && _last != _first + _size - 1)
-    {
-      if (_last)
-      {
-        _last++;
-        *_last = a;
-      }
-      else
-      {
-        *_first = a;
-        _last = _first;
-      }
-      return true;
-    }
-    else
+    bool dequeIsFull = _first && ((_first == _head && _last == _head + _size - 1) ||
+                                  (_first != _head && _first == _last - 1) || (_first == _last + 1 && _last == _head));
+
+    if (!_isNatural(a))
     {
       return false;
     }
+    else if (!_first)
+    {
+      _first = _last = _head;
+      *_last = a;
+      return true;
+    }
+    else if (!dequeIsFull && _last == _head + _size - 1)
+    {
+      _last = _head;
+      *_last = a;
+      return true;
+    }
+    else if (!dequeIsFull)
+    {
+      _last++;
+      *_last = a;
+      return true;
+    }
+    return false;
   }
 
   void delStart(void) override
   {
-    if (_last && _first != _last)
-    {
-      int *p = _first + 1;
-
-      *(p - 1) = *p;
-      while (p != _last)
-      {
-        p++;
-        *(p - 1) = *p;
-      }
-
-      _last--;
-    }
+    if (_first == _last)
+      _first = _last = nullptr;
+    else if (_first == _head + _size - 1)
+      _first = _head;
     else
-    {
-      _last = nullptr;
-    }
+      _first++;
   }
 
   void delEnd(void) override
   {
-    if (_last && _first != _last)
-      _last--;
+    if (_first == _last)
+      _first = _last = nullptr;
+    if (_last == _head)
+      _last = _head + _size - 1;
     else
-      _last = nullptr;
+      _last--;
   }
 
   int readStart(void) override
   {
-    if (_last)
-      return *_first;
-    else
-      return -1;
+    if (_first) return *_first;
+    return -1;
   }
 
   int readEnd(void) override
@@ -275,7 +277,7 @@ class VectorDeque : public Deque
 
   bool isEmpty(void) override
   {
-    if (_last)
+    if (_first)
       return false;
     else
       return true;
@@ -283,13 +285,13 @@ class VectorDeque : public Deque
 
   bool isFilled(void) override
   {
-    if (_last)
+    if (_first)
       return true;
     else
       return false;
   }
 
-  ~VectorDeque() { delete _first; }
+  ~VectorDeque() { delete _head; }
 };
 
 bool isSimple(const int num)
