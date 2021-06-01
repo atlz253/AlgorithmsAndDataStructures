@@ -26,6 +26,7 @@ class Deque
   virtual int readEnd(void) = 0;
   virtual bool isEmpty(void) = 0;
   virtual bool isFilled(void) = 0;
+  virtual int getSize(void) = 0;
   virtual ~Deque() = default;
 };
 
@@ -155,6 +156,8 @@ class ListDeque : public Deque
       return false;
   }
 
+  virtual int getSize(void) override { return 0; }
+
   ~ListDeque()
   {
     while (_first)
@@ -186,7 +189,7 @@ class VectorDeque : public Deque
   bool addStart(const int a) override
   {
     bool dequeIsFull = _first && ((_first == _head && _last == _head + _size - 1) ||
-                                  (_first != _head && _first == _last - 1) || (_first == _last + 1 && _last == _head));
+                                  (*_head != -1 && _first != _head && _first == _last - 1) || (_first == _last + 1 && _last == _head));
 
     if (!_isNatural(a))
     {
@@ -216,7 +219,7 @@ class VectorDeque : public Deque
   bool addEnd(const int a) override
   {
     bool dequeIsFull = _first && ((_first == _head && _last == _head + _size - 1) ||
-                                  (_first != _head && _first == _last - 1) || (_first == _last + 1 && _last == _head));
+                                  (*_head != -1 && _first != _head && _first == _last - 1) || (_first == _last + 1 && _last == _head));
 
     if (!_isNatural(a))
     {
@@ -245,6 +248,9 @@ class VectorDeque : public Deque
 
   void delStart(void) override
   {
+    if (_first == _head)
+      *_head = -1;
+
     if (_first == _last)
       _first = _last = nullptr;
     else if (_first == _head + _size - 1)
@@ -255,9 +261,11 @@ class VectorDeque : public Deque
 
   void delEnd(void) override
   {
-    if (_first == _last)
-      _first = _last = nullptr;
     if (_last == _head)
+      *_head = -1;
+
+    if (_first == _last) _first = _last = nullptr;
+    else if (_last == _head)
       _last = _head + _size - 1;
     else
       _last--;
@@ -291,6 +299,8 @@ class VectorDeque : public Deque
       return false;
   }
 
+  virtual int getSize(void) override { return _size; }
+
   ~VectorDeque() { delete _head; }
 };
 
@@ -301,9 +311,14 @@ bool isSimple(const int num)
   return true;
 }
 
-void simple(Deque *deque)
+Deque *simple(Deque *deque)
 {
-  ListDeque *tmp = new ListDeque();
+  Deque *tmp;
+
+  if (deque->getSize())
+    tmp = new VectorDeque(deque->getSize());
+  else
+    tmp = new ListDeque();
 
   while (deque->isFilled())
   {
@@ -311,27 +326,26 @@ void simple(Deque *deque)
     deque->delStart();
   }
 
-  while (tmp->isFilled())
-  {
-    deque->addEnd(tmp->readStart());
-    tmp->delStart();
-  }
-
-  delete tmp;
+  return tmp;
 }
 
-void sort(Deque *deque)
+Deque* sort(Deque *deque)
 {
-  ListDeque *tmp = new ListDeque();
+  Deque *tmp;
+
+  if (deque->getSize())
+    tmp = new VectorDeque(deque->getSize());
+  else
+    tmp = new ListDeque();
 
   while (deque->isFilled())
   {
-    if (tmp->isEmpty() || tmp->readStart() > deque->readStart())
+    if (tmp->isEmpty() || tmp->readStart() < deque->readStart())
     {
       tmp->addStart(deque->readStart());
       deque->delStart();
     }
-    else if (tmp->readEnd() < deque->readStart())
+    else if (tmp->readEnd() > deque->readStart())
     {
       tmp->addEnd(deque->readStart());
       deque->delStart();
@@ -341,7 +355,7 @@ void sort(Deque *deque)
       int n = deque->readStart();
       deque->delStart();
 
-      while (tmp->readStart() < n)
+      while (tmp->readStart() > n)
       {
         deque->addStart(tmp->readStart());
         tmp->delStart();
@@ -351,13 +365,7 @@ void sort(Deque *deque)
     }
   }
 
-  while (tmp->isFilled())
-  {
-    deque->addEnd(tmp->readStart());
-    tmp->delStart();
-  }
-
-  delete tmp;
+  return tmp;
 }
 
 class Menu
@@ -391,6 +399,7 @@ class Menu
  public:
   void init(void)
   {
+    Deque *tmpd;
     int choice, tmp;
 
     do
@@ -492,10 +501,14 @@ class Menu
           cin.get();
           break;
         case 9:
-          sort(_deque);
+          tmpd = _deque;
+          _deque = sort(tmpd);
+          delete tmpd;
           break;
         case 10:
-          simple(_deque);
+          tmpd = _deque;
+          _deque = simple(tmpd);
+          delete tmpd;
           break;
         case 11:
           _deque->addEnd(5);
