@@ -44,7 +44,7 @@ void Splay::_print(Node* node, int tbl)
 
 Node* Splay::findNode(Node* cur, Node** prev, int key)
 {
-  while (cur)
+  while (++curCompares && cur)
   {
     if (++curCompares && cur->key == key)
       return cur;
