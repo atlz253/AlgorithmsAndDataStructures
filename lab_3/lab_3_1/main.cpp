@@ -220,7 +220,8 @@ class Sorter final
       {
         p += pos2;
         end = _N - pos3;
-        for (split = 1, _otherCmp++, _primaryCmp++; split < end && p[split - 1] <= p[split]; split++, _otherCmp++, _primaryCmp++)
+        for (split = 1, _otherCmp++, _primaryCmp++; split < end && p[split - 1] <= p[split];
+             split++, _otherCmp++, _primaryCmp++)
           ; /*первая серия*/
         if (++_otherCmp && split == _N)
         {
@@ -277,8 +278,7 @@ class Sorter final
   void _printResults(std::string name)
   {
     cout << GREEN << name << ": основных сравнений - " << _primaryCmp << " вспомогательных сравнений - " << _otherCmp
-         << " время - " << _time << " мс"
-         << " объем требуемой доп памяти - " << _memory << WHITE << endl;
+         << " время - " << _time << " объем требуемой доп памяти - " << _memory << WHITE << endl;
   }
 
  public:
