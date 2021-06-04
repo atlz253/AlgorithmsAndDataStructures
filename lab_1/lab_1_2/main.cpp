@@ -8,15 +8,6 @@ using namespace std;
 
 class Deque
 {
- protected:
-  bool _isNatural(const int num)
-  {
-    if (num <= 0)
-      return false;
-    else
-      return true;
-  }
-
  public:
   virtual bool addStart(const int a) = 0;
   virtual bool addEnd(const int a) = 0;
@@ -46,54 +37,46 @@ class ListDeque : public Deque
  public:
   bool addStart(const int a) override
   {
-    if (_isNatural(a))
+    if (!_first)
     {
-      if (!_first)
-      {
-        _first = new node;
-        _first->num = a;
-        _last = _first;
-      }
-      else
-      {
-        node *new_node = new node;
-        new_node->num = a;
-        new_node->next = _first;
-        _first->prev = new_node;
-        _first = new_node;
-      }
+      _first = new node;
+      _first->num = a;
+      _last = _first;
       return true;
     }
     else
     {
-      return false;
+      node *new_node = new node;
+      new_node->num = a;
+      new_node->next = _first;
+      _first->prev = new_node;
+      _first = new_node;
+      return true;
     }
+
+    return false;
   }
 
   bool addEnd(const int a) override
   {
-    if (_isNatural(a))
+    if (!_last)
     {
-      if (!_last)
-      {
-        _last = new node;
-        _last->num = a;
-        _first = _last;
-      }
-      else
-      {
-        node *new_node = new node;
-        new_node->num = a;
-        new_node->prev = _last;
-        _last->next = new_node;
-        _last = new_node;
-      }
+      _last = new node;
+      _last->num = a;
+      _first = _last;
       return true;
     }
     else
     {
-      return false;
+      node *new_node = new node;
+      new_node->num = a;
+      new_node->prev = _last;
+      _last->next = new_node;
+      _last = new_node;
+      return true;
     }
+
+    return false;
   }
 
   void delStart(void) override
@@ -188,14 +171,11 @@ class VectorDeque : public Deque
 
   bool addStart(const int a) override
   {
-    bool dequeIsFull = _first && ((_first == _head && _last == _head + _size - 1) ||
-                                  (*_head != -1 && _first != _head && _first == _last - 1) || (_first == _last + 1 && _last == _head));
+    bool dequeIsFull =
+        _first && ((_first == _head && _last == _head + _size - 1) ||
+                   (*_head != -1 && _first != _head && _first == _last - 1) || (_first == _last + 1 && _last == _head));
 
-    if (!_isNatural(a))
-    {
-      return false;
-    }
-    else if (!_first)
+    if (!_first)
     {
       _first = _last = _head;
       *_first = a;
@@ -218,14 +198,11 @@ class VectorDeque : public Deque
 
   bool addEnd(const int a) override
   {
-    bool dequeIsFull = _first && ((_first == _head && _last == _head + _size - 1) ||
-                                  (*_head != -1 && _first != _head && _first == _last - 1) || (_first == _last + 1 && _last == _head));
+    bool dequeIsFull =
+        _first && ((_first == _head && _last == _head + _size - 1) ||
+                   (*_head != -1 && _first != _head && _first == _last - 1) || (_first == _last + 1 && _last == _head));
 
-    if (!_isNatural(a))
-    {
-      return false;
-    }
-    else if (!_first)
+    if (!_first)
     {
       _first = _last = _head;
       *_last = a;
@@ -248,8 +225,7 @@ class VectorDeque : public Deque
 
   void delStart(void) override
   {
-    if (_first == _head)
-      *_head = -1;
+    if (_first == _head) *_head = -1;
 
     if (_first == _last)
       _first = _last = nullptr;
@@ -261,10 +237,10 @@ class VectorDeque : public Deque
 
   void delEnd(void) override
   {
-    if (_last == _head)
-      *_head = -1;
+    if (_last == _head) *_head = -1;
 
-    if (_first == _last) _first = _last = nullptr;
+    if (_first == _last)
+      _first = _last = nullptr;
     else if (_last == _head)
       _last = _head + _size - 1;
     else
@@ -304,6 +280,14 @@ class VectorDeque : public Deque
   ~VectorDeque() { delete _head; }
 };
 
+bool isNatural(const int num)
+{
+  if (num <= 0)
+    return false;
+  else
+    return true;
+}
+
 bool isSimple(const int num)
 {
   for (int i = 2; i < num; i++)
@@ -329,7 +313,7 @@ Deque *simple(Deque *deque)
   return tmp;
 }
 
-Deque* sort(Deque *deque)
+Deque *sort(Deque *deque)
 {
   Deque *tmp;
 
@@ -450,7 +434,7 @@ class Menu
       {
         case 1:
           tmp = _input("Введите натуральное число: ");
-          if (!_deque->addStart(tmp))
+          if (isNatural(tmp) && !_deque->addStart(tmp))
           {
             cout << "Очередь переполненна или число не является натуральным!" << endl;
             cin.get();
@@ -458,7 +442,7 @@ class Menu
           break;
         case 2:
           tmp = _input("Введите натуральное число: ");
-          if (!_deque->addEnd(tmp))
+          if (isNatural(tmp) && !_deque->addEnd(tmp))
           {
             cout << "Очередь переполненна или число не является натуральным!" << endl;
             cin.get();
