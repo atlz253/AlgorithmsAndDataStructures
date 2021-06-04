@@ -157,6 +157,7 @@ class VectorDeque : public Deque
  private:
   int _size = 0;
 
+  int *_end = nullptr;
   int *_head = nullptr;
 
   int *_first = nullptr;
@@ -167,13 +168,12 @@ class VectorDeque : public Deque
   {
     _size = size;
     _head = new int[size];
+    _end = _head + _size - 1;
   }
 
   bool addStart(const int a) override
   {
-    bool dequeIsFull =
-        _first && ((_first == _head && _last == _head + _size - 1) ||
-                   (*_head != -1 && _first != _head && _first == _last - 1) || (_first == _last + 1 && _last == _head));
+    bool dequeIsFull = _first && ((_first == _head && _last == _head + _size - 1) || (_first == _last + 1));
 
     if (!_first)
     {
@@ -183,7 +183,7 @@ class VectorDeque : public Deque
     }
     else if (!dequeIsFull && _head == _first)
     {
-      _first = _head + _size - 1;
+      _first = _end;
       *_first = a;
       return true;
     }
@@ -198,9 +198,7 @@ class VectorDeque : public Deque
 
   bool addEnd(const int a) override
   {
-    bool dequeIsFull =
-        _first && ((_first == _head && _last == _head + _size - 1) ||
-                   (*_head != -1 && _first != _head && _first == _last - 1) || (_first == _last + 1 && _last == _head));
+    bool dequeIsFull = _first && ((_first == _head && _last == _head + _size - 1) || (_first == _last + 1));
 
     if (!_first)
     {
@@ -208,7 +206,7 @@ class VectorDeque : public Deque
       *_last = a;
       return true;
     }
-    else if (!dequeIsFull && _last == _head + _size - 1)
+    else if (!dequeIsFull && _last == _end)
     {
       _last = _head;
       *_last = a;
@@ -225,11 +223,9 @@ class VectorDeque : public Deque
 
   void delStart(void) override
   {
-    if (_first == _head) *_head = -1;
-
     if (_first == _last)
       _first = _last = nullptr;
-    else if (_first == _head + _size - 1)
+    else if (_first == _end)
       _first = _head;
     else
       _first++;
@@ -237,12 +233,10 @@ class VectorDeque : public Deque
 
   void delEnd(void) override
   {
-    if (_last == _head) *_head = -1;
-
     if (_first == _last)
       _first = _last = nullptr;
     else if (_last == _head)
-      _last = _head + _size - 1;
+      _last = _end;
     else
       _last--;
   }
@@ -434,7 +428,7 @@ class Menu
       {
         case 1:
           tmp = _input("Введите натуральное число: ");
-          if (isNatural(tmp) && !_deque->addStart(tmp))
+          if (!isNatural(tmp) || !_deque->addStart(tmp))
           {
             cout << "Очередь переполненна или число не является натуральным!" << endl;
             cin.get();
@@ -442,7 +436,7 @@ class Menu
           break;
         case 2:
           tmp = _input("Введите натуральное число: ");
-          if (isNatural(tmp) && !_deque->addEnd(tmp))
+          if (!isNatural(tmp) || !_deque->addEnd(tmp))
           {
             cout << "Очередь переполненна или число не является натуральным!" << endl;
             cin.get();
