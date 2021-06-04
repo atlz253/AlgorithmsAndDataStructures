@@ -271,7 +271,7 @@ class VectorDeque : public Deque
 
   virtual int getSize(void) override { return _size; }
 
-  ~VectorDeque() { delete _head; }
+  ~VectorDeque() { delete[] _head; }
 };
 
 bool isNatural(const int num)
