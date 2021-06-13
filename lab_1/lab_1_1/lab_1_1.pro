@@ -6,7 +6,7 @@ CONFIG -= qt
 SOURCES += \
         main.cpp
 
-DISTFILES += \
-  base.bin
+DISTFILES += README.md \
+             base.bin
 
 QMAKE_POST_LINK += cp -f $$PWD/base.bin $$OUT_PWD/ $$escape_expand(\\n\\t)

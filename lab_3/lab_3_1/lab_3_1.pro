@@ -7,6 +7,7 @@ SOURCES += \
         main.cpp
 
 OTHER_FILES += \
+            README.md \
             N410.txt \
             N4100.txt \
             N4500.txt \

@@ -7,6 +7,7 @@ SOURCES += \
         main.cpp
 
 DISTFILES += \
+  README.md \
   graph \
   graph.graphml \
   graph2 \

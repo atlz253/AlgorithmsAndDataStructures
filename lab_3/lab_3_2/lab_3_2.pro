@@ -13,6 +13,7 @@ HEADERS += \
   splay.hpp
 
 OTHER_FILES += \
+            README.md \
             testKeys.txt \
             testKeysExpl.txt
 
